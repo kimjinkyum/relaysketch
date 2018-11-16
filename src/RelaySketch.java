@@ -23,6 +23,13 @@ public class RelaySketch {
 
 	public static String IPADDRESS;
 	public static int check_IP=0;
+	public static String NAME;
+	public static int check_name=0;
+	public static String TEAM;
+	public static int check_team;
+	
+	
+	
 	private JFrame frame;
 	private JTextField txtEnterIpAddress;
 	private JTextField txtEnterYourName;
@@ -67,7 +74,7 @@ public class RelaySketch {
 		
 		JButton submit_ip=new JButton("Submit");
 		submit_ip.setFont(new Font("Arial Black",Font.PLAIN,22));
-		submit_ip.setBounds(375, 168, 137, 37);
+		submit_ip.setBounds(375, 168, 137, 49);
 		
 		welcomePanel.add(submit_ip);
 		submit_ip.addActionListener(new ActionListener() 
@@ -76,10 +83,8 @@ public class RelaySketch {
 	         @Override
 	         public void actionPerformed(ActionEvent e) 
 	         {
-	        	 
-	        	
+	        
 	        	 IPADDRESS= txtEnterIpAddress.getText();
-	        	 System.out.println(IPADDRESS);
 	        	 check_IP=1;
 	         }
 
@@ -100,6 +105,22 @@ public class RelaySketch {
 		welcomePanel.add(txtEnterYourName);
 		txtEnterYourName.setColumns(10);
 		
+		JButton submit_name = new JButton("Submit");
+		
+		submit_name.setFont(new Font("Arial Black",Font.PLAIN,22));
+		submit_name.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) 
+			{
+				NAME=txtEnterYourName.getText();
+				check_name=1;
+			}
+		});
+		
+		submit_name.setBounds(375, 238, 137, 50);
+		welcomePanel.add(submit_name);
+		
+		
+		
 		JLabel lblTeam = new JLabel("Team");
 		lblTeam.setFont(new Font("Arial Black", Font.PLAIN, 22));
 		lblTeam.setBounds(12, 305, 137, 50);
@@ -108,15 +129,25 @@ public class RelaySketch {
 		JButton btnNewButton = new JButton("A");
 		btnNewButton.setFont(new Font("Agency FB", Font.BOLD, 52));
 		btnNewButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
+			public void actionPerformed(ActionEvent arg0) 
+			{
+				TEAM="A";
+				check_team=1;
 			}
 		});
 		btnNewButton.setBounds(161, 302, 80, 65);
 		welcomePanel.add(btnNewButton);
 	
-	  JButton btnB = new JButton("B");
+		JButton btnB = new JButton("B");
 		btnB.setFont(new Font("Agency FB", Font.BOLD, 52));
 		btnB.setBounds(281, 302, 80, 65);
+		btnB.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) 
+			{
+				TEAM="B";
+				check_team=1;
+			}
+		});
 		welcomePanel.add(btnB);
 		
 		JLabel lblRelaySketch = new JLabel("RELAY SKETCH");
@@ -124,6 +155,9 @@ public class RelaySketch {
 		lblRelaySketch.setFont(new Font("Arial Rounded MT Bold", Font.BOLD | Font.ITALIC, 54));
 		lblRelaySketch.setBounds(407, 24, 462, 82);
 		welcomePanel.add(lblRelaySketch);
+		
+	
+		
 		
 		frame.setResizable(false);//사이즈 조정x
 		frame.setLocationRelativeTo(null);
