@@ -140,33 +140,64 @@ public class Client {
      * @return 
      * @throws IOException 
      * @throws ClassNotFoundException 
+     * @throws InterruptedException 
      * @throws UnknownHostException 
      */
 
-    public void run() throws IOException, ClassNotFoundException{
+    public void run() throws IOException, ClassNotFoundException, InterruptedException{
 
+    	String serverAddress=null ; 
+    			//getServerAddress();
+    	while(true) 
+    	{
+    		if(RelaySketch.check_IP==1) 
+    		{
+    			serverAddress=RelaySketch.IPADDRESS;
+    			break;
+    		}
+    		System.out.println();
+    		
+    	}
         // Make connection and initialize streams
-        String serverAddress = getServerAddress();
-        
         Socket socket = new Socket(serverAddress, 5880);
+        
         in = new BufferedReader(new InputStreamReader(
                 socket.getInputStream()));
-            out = new PrintWriter(socket.getOutputStream(), true);
+        out = new PrintWriter(socket.getOutputStream(), true);
         
-                
+        //out.println(serverAddress);
+               
         
         // Process all messages from server, according to the protocol.
         while (true) 
         { 
             String line = in.readLine();
-            if (line.startsWith("SUBMITNAME")) {
-                out.println(getName());
+            if (line.startsWith("SUBMITNAME")) 
+            {
+            	while(true) 
+            	{
+            		if(RelaySketch.check_name==1) 
+            		{
+            			out.println(RelaySketch.NAME);
+            			break;
+            		}
+            		System.out.println();
+            	} 	
             } else if (line.startsWith("NAMEACCEPTED")) {
                 textField.setEditable(true);
             }
             else if(line.startsWith("SUBMITTEAM")) 
             {
-               out.println(getTeam());
+               
+            	while(true) 
+            	{
+            		if(RelaySketch.check_team==1) 
+            		{
+            			out.println(RelaySketch.TEAM);
+            			break;
+            		}
+            		System.out.println();
+            	}
             }
             
             else if (line.startsWith("MESSAGE")) {
@@ -179,8 +210,7 @@ public class Client {
             else if(line.startsWith("<START>"))
             {  
                while(check==0) {
-           
-              System.out.println(check);
+             System.out.println();
                 if(check==1) {
                    System.out.println("in "+check);
                       
@@ -196,7 +226,7 @@ public class Client {
             }
             else if(line.startsWith("<CANVAS>"))
             {
-               Socket soc=new Socket(serverAddress,11111);
+            	Socket soc=new Socket(serverAddress,11111);
                System.out.println(":start!");
                out2=soc.getOutputStream();
                DataOutputStream dout=new DataOutputStream(out2);
@@ -206,14 +236,15 @@ public class Client {
                   byte[] buffer= new byte[5000];
                   int len;
                   int data=0;
-                   int datas;
+                   int datas=0;
                      
                   while((len=fin.read(buffer))>0)
                   {
                      data++;
+                     
                   }
                   dout.writeInt(data);
-                  datas=data;
+                  //datas=data;
                   System.out.println(data);
                   fin.close();
                   fin=new FileInputStream("C:\\2-2\\kkk.png");
@@ -223,15 +254,17 @@ public class Client {
                      len=fin.read(buffer);
                      out2.write(buffer,0,len);
                      System.out.println(len);
+                     out.println(len);
+                     
                   }
                
-               
+               out2.flush();
             }
             else if(line.startsWith("<out>"))
             {
 
                System.out.println("out");
-               out2.close();
+              out2.close(); 
                System.out.println("out");
                
             }
