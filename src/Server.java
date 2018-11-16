@@ -25,7 +25,11 @@ public class Server{
    static  DataInputStream dis=null;
      static FileOutputStream fos=null;
      static BufferedOutputStream bos=null;
-    
+
+static int asequence=0,bsequence=0,AC=0,BC=0;
+
+
+
    /*The relay sketch server port number- coonet client */
  static int Acheck=0,Bcheck=0;
  static Socket send=new Socket();
@@ -116,7 +120,6 @@ public class Server{
              * broadcasts them.
 
              */
-int asequence=0,bsequence=0,AC=0,BC=0;
             public void run() {
                 try {
                     // Create character streams for the socket.
@@ -181,11 +184,8 @@ int asequence=0,bsequence=0,AC=0,BC=0;
                     // Accept messages from this client and broadcast them.
                     // Ignore other clients that cannot be broadcasted to.
                     // then if it is match whisper format then send distinct user, not all
-
+                    int akk=0,bkk=0;
                     while (true) {
-                       
-                        
-                         
                         //순서를 배정해주기
                         if(team_a.size()==3&&Acheck==0) {
                              for(PrintWriter writer : team_a.values())
@@ -217,19 +217,22 @@ int asequence=0,bsequence=0,AC=0,BC=0;
                              Bcheck=1;
                              }
  
-                        int akk=0,bkk=0;
                         Image k=null;
                         String input = in.readLine();
                         if(input.equals("<send>"))
-                        { 
+                        { int wow=0;
                             if(name.startsWith("<A> ")) {
-                                AC++;
+                            
                                for(PrintWriter writer : team_a.values())
                                   {  
-                                  if(AC-1==akk)
+                                  if(AC==akk)
                                    { 
-                                     ServerSocket soc=new ServerSocket(11111);
-                                       
+                                  
+                                  
+                                  while(wow==0) {
+                                   ServerSocket soc=new ServerSocket(11111);
+
+                                 int count=0;
                                     writer.println("<CANVAS>");
                                      System.out.println("Server start");
                                      send=soc.accept();
@@ -246,24 +249,48 @@ int asequence=0,bsequence=0,AC=0,BC=0;
                                         
                                         byte[] buffer = new byte[5000];
                                         int len;
+                                        int temp;
+                                        temp=data;
                                         System.out.println(data);
                                         for(;data>0;data--)
                                         {
                                            len=in2.read(buffer);
                                            out2.write(buffer,0,len);
+                                           String queue=in.readLine();
+                                           if(Integer.toString(len).equals(queue))
+                                           {
+                                              count++;
+                                              System.out.println("hiyo");
+                                           }
                                             System.out.println(len);
                                         }
+                                        System.out.println("count : "+count);
+                                        if(count==temp)
+                                        {   
+                                           System.out.println(count);
+                                          wow=1; 
+                                        }
+                                        System.out.println("wow = "+wow);
                                        System.out.println("dfadsf");
                                         out2.flush();
                                          out2.close();
                                       writer.println("<out>");
                                       soc.close();
                                       System.out.println("hidy");
+                                        
                                    }
-                                  if(AC==akk)
+                                  
+                                  
+                                  
+                                  }
+                                  System.out.println("akk : "+akk);
+                                   System.out.println("ACC : "+AC);
+                                   
+                                  if(AC+1==akk)
                                   {  
                                      writer.println("SEND");
                                     writer.println("<START>");
+                                    AC++;
                                   break;
                                   }
                                   
@@ -271,19 +298,58 @@ int asequence=0,bsequence=0,AC=0,BC=0;
                                   }
                                  }
                             if(name.startsWith("<B> ")) {
-                               BC++;
-                                 for(PrintWriter writer : team_b.values())
-                                  { 
-                                    if(BC==bkk)
-                                    {writer.println("SEND");
-
-                                 writer.println("<START>");
-                                    break;
-                                    }
-                                    bkk++;
-                                }
+                                for(PrintWriter writer : team_b.values())
+                                 {   if(BC==akk)
+                                 { 
+                                   ServerSocket soc=new ServerSocket(11111);
+                                     
+                                  writer.println("<CANVAS>");
+                                   System.out.println("Server start");
+                                   send=soc.accept();
+                                   System.out.println("Client accept");
+                                   InputStream in2 =null;
+                                   FileOutputStream out2=null;
+                                   
+                                   in2=send.getInputStream();
+                                   DataInputStream din=new DataInputStream(in2);
+                                 
+                                     int data=din.readInt();
+                                       File file=new File("C:\\2-2\\kkkk.png");
+                                      out2=new FileOutputStream(file);
+                                      
+                                      byte[] buffer = new byte[5000];
+                                      int len;
+                                      System.out.println(data);
+                                      for(;data>0;data--)
+                                      {
+                                         len=in2.read(buffer);
+                                         out2.write(buffer,0,len);
+                                          System.out.println(len);
+                                      }
+                                     System.out.println("dfadsf");
+                                      out2.flush();
+                                       out2.close();
+                                    writer.println("<out>");
+                                    soc.close();
+                                    System.out.println("hidy");
+                                
                                  }
-                        }                        
+                                System.out.println("bkk : "+bkk);
+                                 System.out.println("ACC : "+BC);
+                                 
+                                if(BC+1==bkk)
+                                {  
+                                   writer.println("SEND");
+                                  writer.println("<START>");
+                                  BC++;
+                                break;
+                                }
+                                
+                                bkk++;
+                                }
+                               
+                        }        
+                            }                
                         if (input == null){
 
                            return;
