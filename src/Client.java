@@ -5,9 +5,11 @@ import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -54,10 +56,12 @@ public class Client {
     JTextField textField = new JTextField(40);
     JTextArea messageArea = new JTextArea(8, 40);
     JButton button2=new JButton("Send");
-   
+    static int[] length=new int[20];
     OutputStream out2;
     FileInputStream fin;
-    
+    FileOutputStream fin2;
+    InputStream in2;
+    int wow=0;
     RelaySketch relay=new RelaySketch();
     public static int check=0;
     /**
@@ -146,18 +150,18 @@ public class Client {
 
     public void run() throws IOException, ClassNotFoundException, InterruptedException{
 
-    	String serverAddress=null ; 
-    			//getServerAddress();
-    	while(true) 
-    	{
-    		if(RelaySketch.check_IP==1) 
-    		{
-    			serverAddress=RelaySketch.IPADDRESS;
-    			break;
-    		}
-    		System.out.println();
-    		
-    	}
+       String serverAddress=null ; 
+             //getServerAddress();
+       while(true) 
+       {
+          if(RelaySketch.check_IP==1) 
+          {
+             serverAddress=RelaySketch.IPADDRESS;
+             break;
+          }
+          System.out.println();
+          
+       }
         // Make connection and initialize streams
         Socket socket = new Socket(serverAddress, 5880);
         
@@ -174,30 +178,30 @@ public class Client {
             String line = in.readLine();
             if (line.startsWith("SUBMITNAME")) 
             {
-            	while(true) 
-            	{
-            		if(RelaySketch.check_name==1) 
-            		{
-            			out.println(RelaySketch.NAME);
-            			break;
-            		}
-            		System.out.println();
-            	} 	
+               while(true) 
+               {
+                  if(RelaySketch.check_name==1) 
+                  {
+                     out.println(RelaySketch.NAME);
+                     break;
+                  }
+                  System.out.println();
+               }    
             } else if (line.startsWith("NAMEACCEPTED")) {
                 textField.setEditable(true);
             }
             else if(line.startsWith("SUBMITTEAM")) 
             {
                
-            	while(true) 
-            	{
-            		if(RelaySketch.check_team==1) 
-            		{
-            			out.println(RelaySketch.TEAM);
-            			break;
-            		}
-            		System.out.println();
-            	}
+               while(true) 
+               {
+                  if(RelaySketch.check_team==1) 
+                  {
+                     out.println(RelaySketch.TEAM);
+                     break;
+                  }
+                  System.out.println();
+               }
             }
             
             else if (line.startsWith("MESSAGE")) {
@@ -210,7 +214,8 @@ public class Client {
             else if(line.startsWith("<START>"))
             {  
                while(check==0) {
-             System.out.println();
+           
+              System.out.println(check);
                 if(check==1) {
                    System.out.println("in "+check);
                       
@@ -226,7 +231,7 @@ public class Client {
             }
             else if(line.startsWith("<CANVAS>"))
             {
-            	Socket soc=new Socket(serverAddress,11111);
+              Socket soc=new Socket(serverAddress,11111);
                System.out.println(":start!");
                out2=soc.getOutputStream();
                DataOutputStream dout=new DataOutputStream(out2);
@@ -236,37 +241,82 @@ public class Client {
                   byte[] buffer= new byte[5000];
                   int len;
                   int data=0;
-                   int datas=0;
+                   int datas;
                      
                   while((len=fin.read(buffer))>0)
                   {
                      data++;
-                     
                   }
                   dout.writeInt(data);
-                  //datas=data;
+                  datas=data;
                   System.out.println(data);
                   fin.close();
                   fin=new FileInputStream("C:\\2-2\\kkk.png");
                   len=0;
+                  int i=0;
                   for(;data>0; data--)
                   {
                      len=fin.read(buffer);
                      out2.write(buffer,0,len);
-                     System.out.println(len);
                      out.println(len);
-                     
-                  }
+                    
+                   }
                
-               out2.flush();
+               
             }
+            else if(line.startsWith("<RECEIVE>"))
+            {
+            	int count=0;
+            Socket soc2=new Socket(serverAddress,22222);
+                System.out.println(":start!");
+                in2=soc2.getInputStream();
+                DataInputStream dout1=new DataInputStream(in2);
+                int len;
+                int data=0;
+                 data=dout1.readInt();
+                 fin2= new FileOutputStream(new File("C:\\2-2\\kkkkk.png"));
+                      DataOutputStream din=new DataOutputStream(soc2.getOutputStream());
+                   byte[] buffer2= new byte[5000];
+                  
+                   System.out.println(data);
+System.out.println("heyyo!");
+                   int temp=data;
+                   len=0;
+                   for(;data>0; data--)
+                   {
+                      len=in2.read(buffer2);
+                      fin2.write(buffer2,0,len);
+                      String queue=in.readLine();
+                      System.out.println("receive : "+len);
+                      System.out.println("!");
+                      System.out.println(queue);
+                      if(Integer.toString(len).equals(queue))
+                      {
+                    	  count++;
+                      }
+                   }
+                   System.out.println(count);
+                   if(count==temp)
+              	 {   
+              		 System.out.println(count);
+              		din.writeInt(1);
+              		System.out.println("wow");
+              		
+              	 }
+                   else
+                   {
+                	   din.writeInt(2);
+                   }
+            	}
+            
             else if(line.startsWith("<out>"))
             {
 
                System.out.println("out");
-              out2.close(); 
+               out2.close();
                System.out.println("out");
                
+             
             }
             
            }
