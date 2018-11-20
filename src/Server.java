@@ -128,10 +128,10 @@ static int asequence=0,bsequence=0,AC=0,BC=0;
 
              */
             @SuppressWarnings("resource")
-			public void run() {
+         public void run() {
                 try {
                     // Create character streams for the socket.
-                	in = new BufferedReader(new InputStreamReader(
+                   in = new BufferedReader(new InputStreamReader(
                             socket.getInputStream()));
                       out = new PrintWriter(socket.getOutputStream(), true);
 
@@ -151,7 +151,7 @@ static int asequence=0,bsequence=0,AC=0,BC=0;
                         
                         synchronized (users) {
                         
-                        	if (!team_a.containsKey(name)&&!team_b.containsKey(name)) {
+                           if (!team_a.containsKey(name)&&!team_b.containsKey(name)) {
                                String temp = null;
                                
                                out.println("SUBMITTEAM");
@@ -165,12 +165,12 @@ static int asequence=0,bsequence=0,AC=0,BC=0;
                                   
 
                                if(team.equals("B")) {
-                            	   
+                                  
                                   team_b.put(name, out);
                                    name="<B> "+name;
                                 
-                            	   }
-
+                                  }
+                               out.println("GAMEFRAME");
                                /*Print new user info in chat room except new user's chat room*/
 
                                for (PrintWriter writer : users.values()){
@@ -235,16 +235,16 @@ static int asequence=0,bsequence=0,AC=0,BC=0;
                             
                                for(PrintWriter writer : team_a.values())
                                   {  
-                            	   if(AC==akk)
+                                  if(AC==akk)
                                    { 
-                            		
-                            		
-                            		while(wow==0) {
-                            			chattingcheck=1;
-                            	   ServerSocket soc2=new ServerSocket(11111);
+                                  
+                                  
+                                  while(wow==0) {
+                                     chattingcheck=1;
+                                  ServerSocket soc2=new ServerSocket(11111);
 
-                           		int count=0;
-                            		  writer.println("<CANVAS>");
+                                 int count=0;
+                                    writer.println("<CANVAS>");
                                      System.out.println("Server start");
                                      send=soc2.accept();
                                      System.out.println("Client accept");
@@ -254,59 +254,59 @@ static int asequence=0,bsequence=0,AC=0,BC=0;
                                      in2=send.getInputStream();
                                      DataInputStream din=new DataInputStream(in2);
                                    
-                                    	int data=din.readInt();
-                                    	  File file=new File("C:\\2-2\\kkkk.png");
-                                    	 out2=new FileOutputStream(file);
-                                    	 
-                                    	 byte[] buffer = new byte[5000];
-                                    	 int len;
-                                    	 int temp;
-                                    	 temp=data;
-                                    	 System.out.println(data);
-                                    	 for(;data>0;data--)
-                                    	 {
-                                    		 len=in2.read(buffer);
-                                    		 out2.write(buffer,0,len);
-                                    		 String queue=in.readLine();
-                                    		 if(Integer.toString(len).equals(queue))
-                                    		 {
-                                    			 count++;
-                                    			 System.out.println("hiyo");
-                                    		 }
-                                    	     System.out.println(len);
-                                    	 }
-                                    	 System.out.println("count : "+count);
-                                    	 if(count==temp)
-                                    	 {   
-                                    		 System.out.println(count);
-                                    		wow=1; 
-                                    	 }
-                                    	 System.out.println("wow = "+wow);
-                                    	System.out.println("dfadsf");
-                                    	 out2.flush();
+                                       int data=din.readInt();
+                                         File file=new File("C:\\2-2\\server_get.png");
+                                        out2=new FileOutputStream(file);
+                                        
+                                        byte[] buffer = new byte[5000];
+                                        int len;
+                                        int temp;
+                                        temp=data;
+                                        System.out.println(data);
+                                        for(;data>0;data--)
+                                        {
+                                           len=in2.read(buffer);
+                                           out2.write(buffer,0,len);
+                                           String queue=in.readLine();
+                                           if(Integer.toString(len).equals(queue))
+                                           {
+                                              count++;
+                                              System.out.println("hiyo");
+                                           }
+                                            System.out.println(len);
+                                        }
+                                        System.out.println("count : "+count);
+                                        if(count==temp)
+                                        {   
+                                           System.out.println(count);
+                                          wow=1; 
+                                        }
+                                        System.out.println("wow = "+wow);
+                                       System.out.println("dfadsf");
+                                        out2.flush();
                                          out2.close();
                                       writer.println("<out>");
                                       soc2.close();
                                       System.out.println("hidy");
-                                    	 
+                                        
                                    }
-                            		chattingcheck=0;
-                            		
-                            		
-                            		}
-                            	   System.out.println("akk : "+akk);
+                                  chattingcheck=0;
+                                  
+                                  
+                                  }
+                                  System.out.println("akk : "+akk);
                                    System.out.println("ACC : "+AC);
                                   if(AC+1==akk)
-                                  {  		chattingcheck=1;
+                                  {        chattingcheck=1;
                                   //give picture to client.
                                   
 
-                          		while(wow1==0) {
-                          			chattingcheck=1;
-                          	   ServerSocket soc=new ServerSocket(22222);
-                          		
-                         		int count=0;
-                          		  writer.println("<RECEIVE>");
+                                while(wow1==0) {
+                                   chattingcheck=1;
+                                ServerSocket soc=new ServerSocket(22222);
+                                
+                               int count=0;
+                                  writer.println("<RECEIVE>");
                                    System.out.println("Server start");
                                    send=soc.accept();
                                    System.out.println("Client accept");
@@ -315,7 +315,7 @@ static int asequence=0,bsequence=0,AC=0,BC=0;
                                    DataOutputStream din=new DataOutputStream(in3);
                                    DataInputStream dout1=new DataInputStream(send.getInputStream());
                                    
-                                   fin2= new FileInputStream(new File("C:\\2-2\\kkkk.png"));
+                                   fin2= new FileInputStream(new File("C:\\2-2\\server_get.png"));
                                    
                                    byte[] buffer2= new byte[5000];
                                    int len;
@@ -326,37 +326,37 @@ static int asequence=0,bsequence=0,AC=0,BC=0;
                                    }
                                    din.writeInt(data);
                                    fin2.close();
-                                  	 int temp;
-                                  	 temp=data;
-                                  	 System.out.println(data);
-                                  	fin2=new FileInputStream(new File("C:\\2-2\\kkkk.png"));
+                                      int temp;
+                                      temp=data;
+                                      System.out.println(data);
+                                     fin2=new FileInputStream(new File("C:\\2-2\\server_get.png"));
                                     
-                                  	 for(;data>0; data--)
+                                      for(;data>0; data--)
                                      {
                                         len=fin2.read(buffer2);
                                         in3.write(buffer2,0,len);
                                         writer.println(len);
                                         System.out.println(len);
                                      }
-                                          	 
+                                              
 
                                       
-                                  	 System.out.println("wow1 = "+wow1);
-                                  	System.out.println("dfadsf");
-                                  	
-                                  	int ch1=dout1.readInt();
-                                  	 System.out.println("end : "+ch1);
+                                      System.out.println("wow1 = "+wow1);
+                                     System.out.println("dfadsf");
+                                     
+                                     int ch1=dout1.readInt();
+                                      System.out.println("end : "+ch1);
                                     soc.close();
                                     System.out.println("hidy");
                                     if(ch1==1)
                                     {
-                                    	wow1=1;
+                                       wow1=1;
                                     }
-                                  	 
+                                      
                                  }
                                   
                                   
-                                	  writer.println("SEND");
+                                     writer.println("SEND");
                                     writer.println("<START>");
                                     AC++;
                                   break;
@@ -367,17 +367,17 @@ static int asequence=0,bsequence=0,AC=0,BC=0;
                                  }
                             //Bteam get the picture from client.
                             if(name.startsWith("<B> ")) {
-                            	 for(PrintWriter writer : team_b.values())
+                                for(PrintWriter writer : team_b.values())
                                  {    if(BC==bkk)
                                  { 
-                             		
-                             		
-                          		while(wow3==0) {
-                          			chattingcheck=1;
-                          	   ServerSocket soc=new ServerSocket(11111);
+                                   
+                                   
+                                while(wow3==0) {
+                                   chattingcheck=1;
+                                ServerSocket soc=new ServerSocket(11111);
 
-                         		int count=0;
-                          		  writer.println("<CANVAS>");
+                               int count=0;
+                                  writer.println("<CANVAS>");
                                    System.out.println("Server start");
                                    send=soc.accept();
                                    System.out.println("Client accept");
@@ -387,61 +387,61 @@ static int asequence=0,bsequence=0,AC=0,BC=0;
                                    in2=send.getInputStream();
                                    DataInputStream din=new DataInputStream(in2);
                                  
-                                  	int data=din.readInt();
-                                  	  File file=new File("C:\\2-2\\kkkk.png");
-                                  	 out2=new FileOutputStream(file);
-                                  	 
-                                  	 byte[] buffer = new byte[5000];
-                                  	 int len;
-                                  	 int temp;
-                                  	 temp=data;
-                                  	 System.out.println(data);
-                                  	 for(;data>0;data--)
-                                  	 {
-                                  		 len=in2.read(buffer);
-                                  		 out2.write(buffer,0,len);
-                                  		 String queue=in.readLine();
-                                  		 if(Integer.toString(len).equals(queue))
-                                  		 {
-                                  			 count++;
-                                  			 System.out.println("hiyo");
-                                  		 }
-                                  	     System.out.println(len);
-                                  	 }
-                                  	 System.out.println("count : "+count);
-                                  	 if(count==temp)
-                                  	 {   
-                                  		 System.out.println(count);
-                                  		wow3=1; 
-                                  	 }
-                                  	 System.out.println("wow = "+wow3);
-                                  	System.out.println("dfadsf");
-                                  	 out2.flush();
+                                     int data=din.readInt();
+                                       File file=new File("C:\\2-2\\server_get.png");
+                                      out2=new FileOutputStream(file);
+                                      
+                                      byte[] buffer = new byte[5000];
+                                      int len;
+                                      int temp;
+                                      temp=data;
+                                      System.out.println(data);
+                                      for(;data>0;data--)
+                                      {
+                                         len=in2.read(buffer);
+                                         out2.write(buffer,0,len);
+                                         String queue=in.readLine();
+                                         if(Integer.toString(len).equals(queue))
+                                         {
+                                            count++;
+                                            System.out.println("hiyo");
+                                         }
+                                          System.out.println(len);
+                                      }
+                                      System.out.println("count : "+count);
+                                      if(count==temp)
+                                      {   
+                                         System.out.println(count);
+                                        wow3=1; 
+                                      }
+                                      System.out.println("wow = "+wow3);
+                                     System.out.println("dfadsf");
+                                      out2.flush();
                                        out2.close();
                                     writer.println("<out>");
                                     soc.close();
                                     System.out.println("hidy");
-                                  	 
+                                      
                                  }
-                          		chattingcheck=0;
-                          		
-                          		
-                          		}
-                          	   System.out.println("bkk : "+bkk);
+                                chattingcheck=0;
+                                
+                                
+                                }
+                                System.out.println("bkk : "+bkk);
                                  System.out.println("ACC : "+BC);
                                  
                                 if(BC+1==bkk)
                                 {  
-                              		chattingcheck=1;
+                                    chattingcheck=1;
                                     //give picture to client.
                                     
 
-                            		while(wow4==0) {
-                            			chattingcheck=1;
-                            	   ServerSocket soc=new ServerSocket(22222);
-                            		
-                           		int count=0;
-                            		  writer.println("<RECEIVE>");
+                                  while(wow4==0) {
+                                     chattingcheck=1;
+                                  ServerSocket soc=new ServerSocket(22222);
+                                  
+                                 int count=0;
+                                    writer.println("<RECEIVE>");
                                      System.out.println("Server start");
                                      send=soc.accept();
                                      System.out.println("Client accept");
@@ -450,7 +450,7 @@ static int asequence=0,bsequence=0,AC=0,BC=0;
                                      DataOutputStream din=new DataOutputStream(in3);
                                      DataInputStream dout1=new DataInputStream(send.getInputStream());
                                      
-                                     fin2= new FileInputStream(new File("C:\\2-2\\kkkk.png"));
+                                     fin2= new FileInputStream(new File("C:\\2-2\\server_get.png"));
                                      
                                      byte[] buffer2= new byte[5000];
                                      int len;
@@ -461,42 +461,36 @@ static int asequence=0,bsequence=0,AC=0,BC=0;
                                      }
                                      din.writeInt(data);
                                      fin2.close();
-                                    	 int temp;
-                                    	 temp=data;
-                                    	 System.out.println(data);
-                                    	fin2=new FileInputStream(new File("C:\\2-2\\kkkk.png"));
+                                        int temp;
+                                        temp=data;
+                                        System.out.println(data);
+                                       fin2=new FileInputStream(new File("C:\\2-2\\server_get.png"));
                                       
-                                    	 for(;data>0; data--)
+                                        for(;data>0; data--)
                                        {
                                           len=fin2.read(buffer2);
                                           in3.write(buffer2,0,len);
                                           writer.println(len);
                                           System.out.println(len);
                                        }
-                                            	 
+                                                
 
                                         
-                                    	 System.out.println("wow1 = "+wow4);
-                                    	System.out.println("dfadsf");
-                                    	
-                                    	int ch1=dout1.readInt();
-                                    	 System.out.println("end : "+ch1);
+                                        System.out.println("wow1 = "+wow4);
+                                       System.out.println("dfadsf");
+                                       
+                                       int ch1=dout1.readInt();
+                                        System.out.println("end : "+ch1);
                                       soc.close();
                                       System.out.println("hidy");
                                       if(ch1==1)
                                       {
-                                      	wow4=1;
+                                         wow4=1;
                                       }
-                                    	 
+                                        
                                    }
-                                    
-
-                                	
-                                	
-                                	
-                                	
-                                	
-                              	  writer.println("SEND");
+                                  
+                                   writer.println("SEND");
                                   writer.println("<START>");
                                   BC++;
                                 break;
@@ -515,6 +509,9 @@ static int asequence=0,bsequence=0,AC=0,BC=0;
                         //pop up the drowing board to first man of team.
                        
                         if(chattingcheck==0) {
+                           if(input.equals("<send>")) {
+                              continue;
+                           }
                         /*braodcast message all user but same team!*/
                            for(HashMap.Entry<String,PrintWriter> entry : users.entrySet()){
                              if(name.startsWith("<A> ")) {
