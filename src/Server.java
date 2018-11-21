@@ -143,7 +143,7 @@ static int asequence=0,bsequence=0,AC=0,BC=0;
                     // must be done while locking the set of users.
                     while (true) {
                        /**/
-                       out.println("SUBMITNAME");
+                       out.println("<SUBMITNAME>");
                         name = in.readLine();
                         if (name == null) {
                             return;
@@ -154,7 +154,7 @@ static int asequence=0,bsequence=0,AC=0,BC=0;
                            if (!team_a.containsKey(name)&&!team_b.containsKey(name)) {
                                String temp = null;
                                
-                               out.println("SUBMITTEAM");
+                               out.println("<SUBMITTEAM>");
                                team=in.readLine();
                                
                                if(team.equals("A")) { 
@@ -170,13 +170,20 @@ static int asequence=0,bsequence=0,AC=0,BC=0;
                                    name="<B> "+name;
                                 
                                   }
-                               out.println("GAMEFRAME");
+                               out.println("<GAMEFRAME>");
                                /*Print new user info in chat room except new user's chat room*/
 
                                for (PrintWriter writer : users.values()){
                                   writer.println("MESSAGE " +"***"+name+"님이 입장하셨습니다. ***");
                                }
                                users.put(name,out);
+                               if(users.size()+ateamout+bteamout==6&&team_a.size()+ateamout==3&&team_b.size()+bteamout==3)
+                               {
+                            	   for(PrintWriter writer : users.values())
+                                   {  
+                            		   writer.println("<ALLIN>");
+                               }
+                            	   }
                                 break;
                             }
                            
@@ -187,7 +194,7 @@ static int asequence=0,bsequence=0,AC=0,BC=0;
                     // Now that a successful name has been chosen, add the
                     // socket's print writer to the set of all writers so
                     // this client can receive broadcast messages.
-                    out.println("NAMEACCEPTED");
+                    out.println("<NAMEACCEPTED>");
 
                     users.put(name, out);
                     // Accept messages from this client and broadcast them.
@@ -200,7 +207,7 @@ static int asequence=0,bsequence=0,AC=0,BC=0;
                              for(PrintWriter writer : team_a.values())
                               {
                                   if(asequence==0) {
-                                        writer.println("SEND ");
+                                        writer.println("<SEND> ");
                                        writer.println("<START>");
                                        chattingcheck=1;
                                   }
@@ -215,7 +222,7 @@ static int asequence=0,bsequence=0,AC=0,BC=0;
                              for(PrintWriter writer : team_b.values())
                               {  
                                 if(bsequence==0) {
-                                     writer.println("SEND ");
+                                     writer.println("<SEND> ");
                                     writer.println("<START>");
                                   chattingcheck=1;
                                 }
@@ -356,7 +363,7 @@ static int asequence=0,bsequence=0,AC=0,BC=0;
                                  }
                                   
                                   
-                                     writer.println("SEND");
+                                     writer.println("<SEND>");
                                     writer.println("<START>");
                                     AC++;
                                   break;
@@ -490,7 +497,7 @@ static int asequence=0,bsequence=0,AC=0,BC=0;
                                         
                                    }
                                   
-                                   writer.println("SEND");
+                                   writer.println("<SEND>");
                                   writer.println("<START>");
                                   BC++;
                                 break;
