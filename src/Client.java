@@ -109,18 +109,18 @@ import javax.swing.plaf.synth.SynthSeparatorUI;
 public class Client {
 
 
-
+	 JLabel label = new JLabel("WAIT");
+     
     BufferedReader in;
 
     PrintWriter out;
     
     JFrame frame= new JFrame();
 
-   ImagePanel welcomePanel=new ImagePanel(new ImageIcon("C:\\Users\\정은서\\eclipse-workspace\\Project_Socket\\src\\image\\black.jpg").getImage());
+   ImagePanel welcomePanel=new ImagePanel(new ImageIcon("C:\\2-2\\black.jpg").getImage());
    
 
    JLabel timerLabel=new JLabel("TIMER");
-
 
     JPanel panel = new JPanel();
 
@@ -164,7 +164,7 @@ public class Client {
 
     public Client() {
         // Layout GUI
-       
+    	
        frame.setSize(1280,720);
        frame.getContentPane().add(welcomePanel, BorderLayout.CENTER);
        
@@ -180,18 +180,21 @@ public class Client {
        panel.add(new JScrollPane(messageArea), "Center");
 
       panel.setBackground(Color.ORANGE);
-      panel.setBounds(852, 102, 412, 579);
+      panel.setBounds(910, 120, 354, 561);
       welcomePanel.add(panel);
      welcomePanel.add(timerLabel,"NORTH");
           
       timerLabel.setForeground(Color.GRAY);
       timerLabel.setFont(new Font("Arial Rounded MT Bold", Font.BOLD | Font.ITALIC, 54));
-      timerLabel.setBounds(555, 10, 462, 82);
-      TimerThread th=new TimerThread(timerLabel);
-
-
-         th.start();
+      timerLabel.setBounds(554, 10, 462, 82);
       
+      label.setForeground(Color.RED);
+      label.setFont(new Font("Arial Rounded MT Bold", Font.BOLD | Font.ITALIC, 54));
+      label.setBounds(981, 26, 204, 82);
+      welcomePanel.add(label);
+     
+
+        
 
         // Add Listeners
 
@@ -246,7 +249,7 @@ public class Client {
       
        String serverAddress=null ; 
 
-             //getServerAddress();
+ 
 
        while(true) 
 
@@ -263,7 +266,7 @@ public class Client {
 
           }
 
-          System.out.println();
+          System.out.print("");
 
           
 
@@ -283,8 +286,6 @@ public class Client {
 
         
 
-        //out.println(serverAddress);
-
                
       
        
@@ -297,7 +298,7 @@ public class Client {
 
             String line = in.readLine();
 
-            if (line.startsWith("SUBMITNAME")) 
+            if (line.startsWith("<SUBMITNAME>")) 
 
             {
             
@@ -316,17 +317,17 @@ public class Client {
 
                   }
 
-                  System.out.println();
+                  System.out.print("");
 
                }    
 
-            } else if (line.startsWith("NAMEACCEPTED")) {
+            } else if (line.startsWith("<NAMEACCEPTED>")) {
            
                 textField.setEditable(true);
 
             }
 
-            else if(line.startsWith("SUBMITTEAM")) 
+            else if(line.startsWith("<SUBMITTEAM>")) 
 
             {
          
@@ -350,7 +351,7 @@ public class Client {
                          
                   
             }
-            else if(line.startsWith("GAMEFRAME")) {
+            else if(line.startsWith("<GAMEFRAME>")) {
             
                frame.setVisible(true);
                          
@@ -363,7 +364,7 @@ public class Client {
 
             }
 
-            else if(line.startsWith("SEND"))
+            else if(line.startsWith("<SEND>"))
 
             {
 
@@ -379,7 +380,7 @@ public class Client {
 
            
 
-              System.out.println(check);
+              System.out.print("");
 
                 if(check==1) {
 
@@ -389,7 +390,7 @@ public class Client {
 
                     out.println("<send>");
 
-                    System.out.println(check);
+                    System.out.print("");
 
                    
 
@@ -573,7 +574,23 @@ public class Client {
                System.out.println("out");
 
             }
-
+            else if(line.startsWith("<ALLIN>"))
+            {
+            	System.out.println("6 people in");
+            	 TimerThread th=new TimerThread(timerLabel);
+            		label.setText("3");
+            		 Thread.sleep(1000);
+            		 label.setText("2");
+            		 Thread.sleep(1000);
+            		 label.setText("1");
+            		 Thread.sleep(1000);
+            		 label.setText("START");
+            		
+            	 
+             	 Thread.sleep(1000);
+            	 th.start();
+                 	
+            }
             
 
            }
@@ -591,7 +608,6 @@ public class Client {
         client.run();
 
     }
-
 }
 class TimerThread extends Thread{
    private JLabel timerLabel;//타이머 값이 출력될 레이블
