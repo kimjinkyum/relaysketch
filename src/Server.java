@@ -177,7 +177,7 @@ static int asequence=0,bsequence=0,AC=0,BC=0;
                                   writer.println("MESSAGE " +"***"+name+"님이 입장하셨습니다. ***");
                                }
                                users.put(name,out);
-                               if(users.size()+ateamout+bteamout==1/*&&team_a.size()+ateamout==3&&team_b.size()+bteamout==3*/)
+                               if(users.size()+ateamout+bteamout==6&&team_a.size()+ateamout==3&&team_b.size()+bteamout==3)
                                {
                             	   for(PrintWriter writer : users.values())
                                    {  
