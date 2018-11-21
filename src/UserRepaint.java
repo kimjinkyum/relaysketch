@@ -46,7 +46,7 @@ public class UserRepaint extends JFrame implements Serializable {
  public final static int CIRCLE = 4;
  public final static int RESET =5;
  public static int check=0;
-
+ public static int isend=0;
  ArrayList<Figure_Info> figureinfo = new ArrayList<Figure_Info>(); // repaint함수 호출 시 이전 정보들을 부르기 위함
  Stack<Figure_Info> trashcanStack = new Stack<Figure_Info>();
  
@@ -102,6 +102,10 @@ public class UserRepaint extends JFrame implements Serializable {
  //TextInfo t;
  @Override
  public void paint(Graphics graphics) {
+	 if(isend==1)
+	   {
+	 	  dispose();
+	   }
   super.paint(graphics);
   this.graphics = graphics;
   graphics = getGraphics(); // 그래픽 초기화
@@ -143,6 +147,7 @@ public class UserRepaint extends JFrame implements Serializable {
  //------------------------------ constructor ---------------------------------------------//
 
  public UserRepaint() { //JFrame이다.
+	 
   setLayout(null); //JFrame을 어떻게 구성해줄 것인가를 정한다.
   setTitle("그림판"); 
   createMenu();
@@ -199,7 +204,7 @@ public class UserRepaint extends JFrame implements Serializable {
   fill_bt.setBounds(690,10,70,40);
   image_bt.setBounds(1100,10,70,40);
   paint_panel.setBounds(10,60,1170,470);
-  
+  paint_panel.setSize(1000,400);
   add(eraser_bt);  
   add(brush_bt);
   add(colorSelect_bt);
@@ -209,6 +214,7 @@ public class UserRepaint extends JFrame implements Serializable {
 
   add(paint_panel);
 
+  
 
   //graphics = getGraphics(); // 그래픽 초기화
   //g = (Graphics2D)graphics; // 2D 사용 이유 : 펜의 굵기와 관련..!
@@ -242,9 +248,11 @@ public class UserRepaint extends JFrame implements Serializable {
   image_bt.addActionListener(new ActionListener() {
    @Override
    public void actionPerformed(ActionEvent e) {
-    
+	   if(isend==1)
+	   {  dispose();
+	   }else {
     //String imagepath = JOptionPane.showInputDialog("저장할 파일 경로와 이름을 입력하세요.");
-    File writeFile = new File("C:\\2-2\\kkk.png");
+    File writeFile = new File("C:\\2-2\\client_paint.png");
     try {
      ImageIO.write(imgBuffer,"jpg",writeFile);
      Client.check=1;
@@ -257,7 +265,7 @@ public class UserRepaint extends JFrame implements Serializable {
     imgBuffer = new BufferedImage(1170,600,BufferedImage.TYPE_INT_RGB);
     g1 = (Graphics2D) imgBuffer.getGraphics();
     g1.setColor(Color.WHITE);
-   }
+   }}
   });
   //**allclean 버튼 리스너
   allclean_bt.addActionListener(new ActionListener() {
@@ -287,6 +295,10 @@ public class UserRepaint extends JFrame implements Serializable {
   //**색상 버튼 리스너
   colorSelect_bt.addActionListener(new ActionListener() { 
    public void actionPerformed(ActionEvent e) {
+	   if(isend==1)
+	   {
+	 	  dispose();
+	   }
     JColorChooser chooser = new JColorChooser();
     selectedColor =chooser.showDialog(null,"Color",Color.ORANGE);
    }
@@ -297,10 +309,17 @@ public class UserRepaint extends JFrame implements Serializable {
   paint_panel.addMouseListener(paintmouselistener);
   paint_panel.addMouseMotionListener(paintmousemotionlistener);
  }
+ 
+ 
+ 
  //** 메뉴 아이템들 리스너
  public class TextMenuActionListener implements ActionListener{
   @Override
   public void actionPerformed(ActionEvent e) {
+	  if(isend==1)
+  {
+ 	  dispose();
+   }
    // TODO Auto-generated method stub
    String str = e.getActionCommand();
    switch(str) {
@@ -442,6 +461,10 @@ public class UserRepaint extends JFrame implements Serializable {
  // ---------------------------------- PaintMouseListener class  -------------------------------------//
  public class PaintMouseListener implements MouseListener{
   public void mousePressed(MouseEvent e) {
+	  if(isend==1)
+	   {
+	 	  dispose();
+	   }
    startX = e.getX(); // 시작 x좌표 지정
    startY = e.getY(); // 시작 y좌표 지정
    //g.setStroke(new BasicStroke(thickness,BasicStroke.CAP_ROUND,0));
@@ -555,7 +578,9 @@ public class UserRepaint extends JFrame implements Serializable {
 
  // ---------------------------------- main method -------------------------------------//
  public static void main(String[] args) {
-  new UserRepaint();
+  UserRepaint q=new UserRepaint();
+ 
+  
  }
 
 }
