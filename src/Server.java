@@ -177,12 +177,38 @@ static int asequence=0,bsequence=0,AC=0,BC=0;
                                   writer.println("MESSAGE " +"***"+name+"님이 입장하셨습니다. ***");
                                }
                                users.put(name,out);
-                               if(users.size()+ateamout+bteamout==6&&team_a.size()+ateamout==3&&team_b.size()+bteamout==3)
+                               if(users.size()+ateamout+bteamout==1/*&&team_a.size()+ateamout==3&&team_b.size()+bteamout==3*/)
                                {
                             	   for(PrintWriter writer : users.values())
                                    {  
                             		   writer.println("<ALLIN>");
                                }
+                            	   for(PrintWriter writer : team_a.values())
+                                   {   int aseq=asequence+1;
+                            		   writer.println("<SEQUENCE>"+aseq);
+                                       
+                                       if(asequence==0) {
+                                             writer.println("<SEND> ");
+                                            writer.println("<START>");
+                                            chattingcheck=1;
+                                       }
+                                       
+                                         asequence++;
+                                         
+                                   }
+                            	   for(PrintWriter writer : team_b.values())
+                                   {      int bseq=bsequence+1;
+                                   
+                            		   writer.println("<SEQUENCE>"+bseq);
+                                     
+                                     if(bsequence==0) {
+                                          writer.println("<SEND> ");
+                                         writer.println("<START>");
+                                       chattingcheck=1;
+                                     }
+                                     bsequence++;
+                                 }
+                                 
                             	   }
                                 break;
                             }
@@ -203,38 +229,13 @@ static int asequence=0,bsequence=0,AC=0,BC=0;
                     int akk=0,bkk=0;
                     while (true) {
                         //순서를 배정해주기
-                        if(team_a.size()+ateamout==3&&Acheck==0) {
-                             for(PrintWriter writer : team_a.values())
-                              {
-                                  if(asequence==0) {
-                                        writer.println("<SEND> ");
-                                       writer.println("<START>");
-                                       chattingcheck=1;
-                                  }
-                                    writer.println("MESSAGE "+"sequence : "+asequence);
-                                    asequence++;
-                                    
-                              }
-                             Acheck=1;
-                            }
-                             
-                        if(team_b.size()+bteamout==3&&Bcheck==0) {
-                             for(PrintWriter writer : team_b.values())
-                              {  
-                                if(bsequence==0) {
-                                     writer.println("<SEND> ");
-                                    writer.println("<START>");
-                                  chattingcheck=1;
-                                }
-                                writer.println("MESSAGE "+"sequence : "+bsequence);
-                              
-                                bsequence++;
-                            }
-                             Bcheck=1;
-                             }
+                           
+                        
  
                         Image k=null;
                         String input = in.readLine();
+                       
+                        
                         if(input.equals("<send>"))
                         { int wow=0; int wow1=0;int wow3=0; int wow4=0;
                       //Ateam get the picture from client.
