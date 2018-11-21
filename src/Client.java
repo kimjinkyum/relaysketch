@@ -105,7 +105,6 @@ import javax.swing.plaf.synth.SynthSeparatorUI;
  */
 
 
-
 public class Client {
 
 
@@ -113,12 +112,11 @@ public class Client {
      
     BufferedReader in;
 
-    PrintWriter out;
+    static PrintWriter out;
     
     JFrame frame= new JFrame();
 
-   ImagePanel welcomePanel=new ImagePanel(new ImageIcon("C:\\2-2\\black.jpg").getImage());
-   
+    static ImagePanel welcomePanel=new ImagePanel(new ImageIcon("C:\\2-2\\black.jpg").getImage());
 
    JLabel timerLabel=new JLabel("TIMER");
 
@@ -145,7 +143,7 @@ public class Client {
     RelaySketch relay=new RelaySketch();
 
     public static int check=0;
-
+    static int timercheck=0;
     /**
 
      * Constructs the client by laying out the GUI and registering a
@@ -171,13 +169,14 @@ public class Client {
        frame.setResizable(false);//사이즈 조정x
 
       frame.setLocationRelativeTo(null);
-
+ 
         textField.setEditable(false);
-        messageArea.setEditable(false);
  
         panel.add(textField, "North");
+       panel.add(messageArea);
+       messageArea.setEditable(false);
 
-       panel.add(new JScrollPane(messageArea), "Center");
+       panel.add(new JScrollPane(), "Center");
 
       panel.setBackground(Color.ORANGE);
       panel.setBounds(910, 120, 354, 561);
@@ -295,7 +294,7 @@ public class Client {
         while (true) 
 
         { 
-
+        	UserRepaint b=null;
             String line = in.readLine();
 
             if (line.startsWith("<SUBMITNAME>")) 
@@ -368,7 +367,7 @@ public class Client {
 
             {
 
-               UserRepaint b=new UserRepaint();
+               b=new UserRepaint();
 
             }
 
@@ -484,7 +483,7 @@ public class Client {
 
                int count=0;
 
-            Socket soc2=new Socket(serverAddress,22222);
+                Socket soc2=new Socket(serverAddress,22222);
 
                 System.out.println(":start!");
 
@@ -591,10 +590,18 @@ public class Client {
             	 th.start();
                  	
             }
-            
+            else if(line.startsWith("<SEQUENCE>"))
+            {
+               String seqnum=line.substring(10);
+               System.out.println(seqnum);
+               label.setText(seqnum);
+            }
+           
 
            }
-
+          //여기다가 점수들 띄워주는 창 올려봐  
+        
+        
         }
     /**
 
@@ -618,10 +625,18 @@ class TimerThread extends Thread{
    //스레드 코드 run()이 종료하면 스레드 종료
    public void run() {
       int n = 100;
-      while(true) {
+      while(n>=0) {
       
          timerLabel.setText(Integer.toString(n));
-         n--;
+        
+         if(n==0)
+         {   
+        	 System.out.println("hello");
+        	 UserRepaint.isend=1;
+        	 break;
+         }
+         else
+        	 n--; 
          try {
             Thread.sleep(1000);//1초간격
          }catch(InterruptedException e) {
