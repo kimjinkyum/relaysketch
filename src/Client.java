@@ -108,8 +108,8 @@ import javax.swing.plaf.synth.SynthSeparatorUI;
 public class Client {
 
 
-	 JLabel label = new JLabel("WAIT");
-     
+    JLabel label = new JLabel("WAIT");
+    JLabel label_1;
     BufferedReader in;
 
     static PrintWriter out;
@@ -159,10 +159,17 @@ public class Client {
      * message from the server.
 
      */
+    private String getanswer() {
+        return JOptionPane.showInputDialog(
+            frame,
+            "Enter your word you think it's answer ※no capital :",
+            "ANSWER",
+            JOptionPane.QUESTION_MESSAGE);
+    };//정답판넬
 
     public Client() {
         // Layout GUI
-    	
+       
        frame.setSize(1280,720);
        frame.getContentPane().add(welcomePanel, BorderLayout.CENTER);
        
@@ -191,6 +198,13 @@ public class Client {
       label.setFont(new Font("Arial Rounded MT Bold", Font.BOLD | Font.ITALIC, 54));
       label.setBounds(981, 26, 204, 82);
       welcomePanel.add(label);
+      
+      label_1 = new JLabel("Word");
+      label_1.setForeground(Color.GRAY);
+      label_1.setFont(new Font("Arial Rounded MT Bold", Font.BOLD | Font.ITALIC, 54));
+      label_1.setBounds(114, 53, 226, 82);
+     welcomePanel.add(label_1);
+     
      
 
         
@@ -294,7 +308,7 @@ public class Client {
         while (true) 
 
         { 
-        	UserRepaint b=null;
+           UserRepaint b=null;
             String line = in.readLine();
 
             if (line.startsWith("<SUBMITNAME>")) 
@@ -575,20 +589,30 @@ public class Client {
             }
             else if(line.startsWith("<ALLIN>"))
             {
-            	System.out.println("6 people in");
-            	 TimerThread th=new TimerThread(timerLabel);
-            		label.setText("3");
-            		 Thread.sleep(1000);
-            		 label.setText("2");
-            		 Thread.sleep(1000);
-            		 label.setText("1");
-            		 Thread.sleep(1000);
-            		 label.setText("START");
-            		
-            	 
-             	 Thread.sleep(1000);
-            	 th.start();
-                 	
+               System.out.println("6 people in");
+                TimerThread th=new TimerThread(timerLabel);
+                  label.setText("3");
+                   Thread.sleep(1000);
+                   label.setText("2");
+                   Thread.sleep(1000);
+                   label.setText("1");
+                   Thread.sleep(1000);
+                   label.setText("START");
+                  
+                
+                 Thread.sleep(1000);
+                th.start();
+                    
+            }
+            else if(line.startsWith("<GIVEWORD>"))
+                  {
+               String givenword =line.substring(10);
+               label_1.setText(givenword);
+                  }//서버에서 단어받아오기
+          
+            else if(line.startsWith("<ANSWERSHEET>"))
+            {
+               out.println(getanswer());
             }
             else if(line.startsWith("<SEQUENCE>"))
             {
@@ -631,12 +655,12 @@ class TimerThread extends Thread{
         
          if(n==0)
          {   
-        	 System.out.println("hello");
-        	 UserRepaint.isend=1;
-        	 break;
+            System.out.println("hello");
+            UserRepaint.isend=1;
+            break;
          }
          else
-        	 n--; 
+            n--; 
          try {
             Thread.sleep(1000);//1초간격
          }catch(InterruptedException e) {
