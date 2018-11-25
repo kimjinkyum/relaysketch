@@ -25,10 +25,13 @@ import java.util.HashMap;
 import java.util.Random;
 
 import javax.imageio.ImageIO;
+import javax.swing.JLabel;
 
 public class Server {
 
    static int asequence = 0, bsequence = 0, AC = 0, BC = 0;
+   static String[] names1=new String[6];
+   static int howmuch=0;
 
    /* The relay sketch server port number- coonet client */
    static int Acheck = 0, Bcheck = 0;
@@ -231,8 +234,18 @@ public class Server {
             // socket's print writer to the set of all writers so
             // this client can receive broadcast messages.
             out.println("<NAMEACCEPTED>");
-
+            names1[howmuch]=name;//여기얌//여기얌//여기얌
+            howmuch++;
+            
             users.put(name, out);
+            for(PrintWriter writer : users.values())
+            {  
+               writer.println("<TEAMVIEW>");
+               writer.println(users.size());
+                for(int i=0; i<howmuch; i++) {
+               writer.println(names1[i]);
+                }
+            }
             // Accept messages from this client and broadcast them.
             // Ignore other clients that cannot be broadcasted to.
             // then if it is match whisper format then send distinct user, not all
@@ -293,7 +306,15 @@ public class Server {
                   }//else (유저 답 틀릴때)
                    String result=is_answer(input.substring(9),indexword_a-1,"A");
                    out.println(result);
-                   out.println(score_a+":"+score_b);
+                   
+                   
+                   for (PrintWriter writer : team_a.values()) 
+                   {
+                	   writer.println("<SCORE>");
+                	   writer.println(score_a+":"+score_b);
+                         
+                   }   
+                   
                    
                }
                
@@ -310,8 +331,13 @@ public class Server {
                   }//else (유저 답 틀릴때)
                    String result=is_answer(input.substring(9),indexword_b-1,"B");
                    out.println(result);
-                   out.println(score_b+":"+score_a);
-
+                   for (PrintWriter writer : team_b.values()) 
+                   {
+                	   writer.println("<SCORE>");
+                	   writer.println(score_b+":"+score_a);
+                         
+                   }
+                   
                }
                
                }
@@ -703,7 +729,7 @@ public class Server {
          }
          return "<ANSWERCORRECT>";
       }
-     return "<ANSWERWORNG>"+choice_word[number];
+      return "<ANSWERWRONG>"+choice_word[number];
    }//진겸
    private static void read_file() throws IOException {
 
