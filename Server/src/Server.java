@@ -27,28 +27,38 @@ import java.util.Random;
 import javax.imageio.ImageIO;
 import javax.swing.JLabel;
 
+/**
+ * server message format :<all upper case letter> 
+ * <SUBMITNAME>: give to client-submit name (must unique) 
+ * <SUBMITTEAM>: give to client, if name is accepted- choose team 
+ * <NAMEACCEPTED>: give to client if name is unique - name is accepted if not enter again. 
+ * <GAMEFRAME>: give to client if name, ip,team_name is all - show game panel. 
+ * <ALLIN>: give to client if meet number of users - start game. 
+ * <SEQUENCE> : give to client - show user's sequence in game panel. 
+ * <GIVECATEGORY>: give to client when game is start - show category to every user. 
+ * <GIVEWORD>: give to client but only to first user- show word to first user. 
+ * <SEND>: give to client if the user in turn?? - show painting panel.
+ * <START>: ??
+ * <TEAMVIEW>: give to client if new user is enter - show user list.
+ * <SCORE>: give to client if last client is answer- update score.
+ * <Aanswer>/<Banswer>: give from client after last client answer - check if the answer is correct.
+ * <ANSWERCORRECT> : give to client when Aanswer/Banswer message is give then the answer is correct - send information to last user.
+ * <ANSWERWRONG>:give to client when Aanswer/Banswer message is give then the answer is wrong - send information to last user.
+ * <CANVAS>: ??
+ * <OUT>:give to client when file transfer is end- socket for file close
+ * <RECEIVE>:??
+ * <AANSWERSHEET>/BAANSWERSHEET> give to client when last client have to answer - answer.
+ */
 public class Server {
 
-   static int asequence = 0, bsequence = 0, AC = 0, BC = 0;
-   static String[] names1=new String[6];
-   static int howmuch=0;
-   static int APASScheck=0,BPASScheck=0;
-   /* The relay sketch server port number- coonet client */
-   static int Acheck = 0, Bcheck = 0;
-   static Socket send2 = new Socket();
-   
-   private static final int PORT = 5880;
-   static int chattingcheck = 0;
-   static OutputStream in3 = null;
-   static FileOutputStream out3 = null;
-
-   static OutputStream in6 = null;
-   static FileOutputStream out6 = null;
-   
-
-   static int ateamout = 0, bteamout = 0;
-   static int a=0,b=0;//º“øµ
-
+   private static int asequence = 0, bsequence = 0;// sequence for each team.
+   private static int acount = 0, bcount = 0;// specify user(by sequence)
+   private static String[] names1 = new String[30];// name for user - using name list
+   private static int user_howmuch = 0;// number of user
+   private static final int PORT = 5880;// The relay sketch server port number- connect client
+   private static int ateamout = 0, bteamout = 0;// number of exit user.
+   private static int a = 0, b = 0;// ???
+  static int APASScheck=0,BPASScheck=0;
    /*
     * The string is the key(users)of clients in the chat room so that we can check
     * that new clients are not registering name already in use. Then mapping
@@ -58,24 +68,29 @@ public class Server {
    private static HashMap<String, PrintWriter> users = new HashMap<String, PrintWriter>();
    private static HashMap<String, PrintWriter> team_a = new HashMap<String, PrintWriter>();
    private static HashMap<String, PrintWriter> team_b = new HashMap<String, PrintWriter>();
-   
-   private static String word[][] = new String[6][30];
-   private static String category[] = new String[6];
-   private static int score_a=0;
-   private static int score_b=0;
-   private static int choice_category;
-   private static String choice_word[]=new String[30];
-   private static int size_word=0;
-   private static int indexword_a=0;
-   private static int indexword_b=0;
+
+   private static String word[][] = new String[6][30];// entire word that read in file
+   private static String category[] = new String[6];// entire category that read in file
+   private static int score_a = 0;// score a team
+   private static int score_b = 0;// score b team
+   private static int choice_category;// choice category index number in category array.
+   private static String choice_word[] = new String[30];// arrange randomly sequence by choice category word.
+   private static int size_word = 0;// word size
+   private static int indexword_a = 0;// sequence of a word index
+   private static int indexword_b = 0;// sequence of b word index
+
+   /*
+    * main function make category, word make socket and listen it accept then run
+    * handler.
+    * 
+    */
    public static void main(String[] args) throws Exception {
       System.out.println("The relay sketch game server is running.");
 
-   
-      random_category();//¡¯∞‚
-      
+      random_category();// make category index
+
       ServerSocket listener = new ServerSocket(PORT);
-      // «ÿ¥Áµ» ∆˜∆Æ∑Œ µÈæÓø√ ºˆ ¿÷∞‘ «‘
+      // Ìï¥ÎãπÎêú Ìè¨Ìä∏Î°ú Îì§Ïñ¥Ïò¨ Ïàò ÏûàÍ≤å Ìï®
 
       try {
          while (true) {
@@ -92,15 +107,6 @@ public class Server {
       private BufferedReader in;
       private PrintWriter out;
       private String team;
-      private BufferedReader in5;
-
-      /**
-       * 
-       * Constructs a handler thread, squirreling away the socket.
-       * 
-       * All the interesting work is done in the run method.
-       * 
-       */
 
       public Handler(Socket socket) {
 
@@ -139,6 +145,7 @@ public class Server {
        */
       @SuppressWarnings("resource")
       public void run() {
+    	  int chattingcheck = 0;// check chatting is available.
          try {
             // Create character streams for the socket.
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -151,578 +158,583 @@ public class Server {
             while (true) {
                out.println("<SUBMITNAME>");
                name = in.readLine();
-               if (name == null) 
-               {
+               if (name == null) {
                   return;
-               } // if(name ==null) πÆ ¡æ∑·
+               } // if(name ==null) Î¨∏ Ï¢ÖÎ£å
 
+               /* check name is unique */
                synchronized (users) {
 
+                  /* if name is unique, then choose team.(A,B) */
                   if (!team_a.containsKey(name) && !team_b.containsKey(name)) {
                      String temp = null;
 
-                     out.println("<SUBMITTEAM>");
+                     out.println("<SUBMITTEAM>");// server message: team choice
                      team = in.readLine();
 
+                     /**
+                      * team assign if a team is over 3(limit) then assign team B if not, assign team
+                      * A put in hash map by team A , B user name format: "<A/B>"+name
+                      */
 
                      if (team.equals("A")) {
-                         if(a>=3) {
-                            team_b.put(name, out);
+                        if (a >= 3) {
+                           team_b.put(name, out);
 
-                            name = "<B> " + name;
-                            b++;
-                         }
-                            
-                         else {
-                         team_a.put(name, out);
+                           name = "<B> " + name;
+                           b++;
+                        }
 
-                         name = "<A> " + name;
-                         a++;//º“øµ
-                         }
-                         System.out.println("\na: "+a+"\n");
-                      } // if(team==A)¡æ∑·
+                        else {
+                           team_a.put(name, out);
+                           name = "<A> " + name;
+                           a++;
+                        }
+                     } // if(team==A)Ï¢ÖÎ£å
 
+                     /**
+                      * team assign if B team is over 3(limit) then assign team A if not, assign team
+                      * B put in hash map by team A , B user name format:"<A/B>"+name
+                      */
+                     if (team.equals("B")) {
 
+                        if (b >= 3) {
+                           team_a.put(name, out);
+                           name = "<A> " + name;
+                           a++;
+                        } else {
+                           team_b.put(name, out);
 
-                      if (team.equals("B")) {
+                           name = "<B> " + name;
+                           b++;
+                        }
 
-                         if(b>=3) {
-                            team_a.put(name, out);
+                     } // if(team==b )Ï¢ÖÎ£å
 
-                            name = "<A> " + name;
-                            a++;//º“øµ
-                            }
-                         else {
-                         team_b.put(name, out);
+                     out.println("<GAMEFRAME>");// now check all things, then game is start (game panel show).
 
-                         name = "<B> " + name;
-                         b++;//º“øµ
-                         }
-
-                      } // if(team==b )¡æ∑·
-
-                     out.println("<GAMEFRAME>");
-                     /* Print new user info in chat room except new user's chat room */
-
-                     for (PrintWriter writer : users.values()) {
-                        writer.println("MESSAGE " + "***" + name + "¥‘¿Ã ¿‘¿Â«œºÃΩ¿¥œ¥Ÿ. ***");
-                     } // for(printwriter)
+                     /*
+                      * array list ÏûàÏúºÎãàÍπå Î∫ºÍπå???? // Print new user info in chat room except new user's
+                      * chat room for (PrintWriter writer : users.values()) {
+                      * writer.println("MESSAGE " + "***" + name + "ÎãòÏù¥ ÏûÖÏû•ÌïòÏÖ®ÏäµÎãàÎã§. ***"); } //
+                      * for(printwriter)
+                      */
                      users.put(name, out);
-                     
-                     if (users.size() + ateamout
-                           + bteamout == 3/* &&team_a.size()+ateamout==3&&team_b.size()+bteamout==3 */) 
-                     {
-                        for (PrintWriter writer : users.values()) 
-                        {
+
+                     /**
+                      * Game preparation is complete and the game begins Step 1: give category and
+                      * order to all users. : give word to first user and provide painting panel. and
+                      * until end of the game chat is prohibited to prevent the outflow of answers.
+                      **/
+                     if (users.size()== 3/*&&a==3&&b==3*/) {
+                        for (PrintWriter writer : users.values()) {
                            writer.println("<ALLIN>");
-                        }//for
-                        for (PrintWriter writer : team_a.values()) {
-                           int aseq = asequence + 1;
-                           writer.println("<SEQUENCE>" + aseq);
-                           writer.println("<GIVECATEGORY>");//¡¯∞‚
-                           writer.println(category[choice_category]);//¡¯∞‚
-                           
-                           if (asequence == 0) {
-
-                              writer.println("<GIVEWORD>");//¡¯∞‚
-                              writer.println(choice_word[indexword_a]);//¡¯∞‚
-                              indexword_a++;//¡¯∞‚
-                              writer.println("<SEND> ");
-                              writer.println("<START>");
-                              chattingcheck = 1;
-                           }//if(aseuqeunce==0)
-
-                           asequence++;
-
-                        }//for(team a)
-                        for (PrintWriter writer : team_b.values()) 
-                        {
-                           int bseq = bsequence + 1;
-
-                           writer.println("<SEQUENCE>" + bseq);
-                           writer.println("<GIVECATEGORY>");//¡¯∞‚
-                           writer.println(category[choice_category]);//¡¯∞‚
-                           
-                           if (bsequence == 0) 
-                           {
-                              writer.println("<GIVEWORD>");//¡¯∞‚
-                              writer.println(choice_word[indexword_b]);//¡¯∞‚
-                              indexword_b++;//¡¯∞‚
-                              writer.println("<SEND> ");
-                              writer.println("<START>");
-                              chattingcheck = 1;
-                           }//if(bsequence==0)
-                           bsequence++;
-                        }//for(team_b)
-                     }//if(all in one)
+                        } // for
+                        give_category("A");// send category to users of a team
+                        give_category("B");// send category to users of b team
+                     } // if(all in one)
                      break;
-                  }//ifπÆ (¿Ã∏ß »Æ¿Œ)
+                  } // ifÎ¨∏ (Ïù¥Î¶Ñ ÌôïÏù∏)
 
-               }//ΩÃ≈©∑Œ
+               } // Ïã±ÌÅ¨Î°ú
 
-            }//whileπÆ
-            
-            // Now that a successful name has been chosen, add the
-            // socket's print writer to the set of all writers so
-            // this client can receive broadcast messages.
-            out.println("<NAMEACCEPTED>");
-            names1[howmuch]=name;//ø©±‚æ‰//ø©±‚æ‰//ø©±‚æ‰
-            howmuch++;
-            
+            } // whileÎ¨∏
+
+            out.println("<NAMEACCEPTED>");// - name is accepted(unique)
+
+            // To every user send the information of other users.(team+name)
+            names1[user_howmuch] = name;
+            user_howmuch++;
+
             users.put(name, out);
-            for(PrintWriter writer : users.values())
-            {  
+
+            for (PrintWriter writer : users.values()) {
                writer.println("<TEAMVIEW>");
                writer.println(users.size());
-                for(int i=0; i<howmuch; i++) {
-               writer.println(names1[i]);
-                }
+               for (int i = 0; i < user_howmuch; i++) {
+                  writer.println(names1[i]);
+               }
             }
-            // Accept messages from this client and broadcast them.
-            // Ignore other clients that cannot be broadcasted to.
-            // then if it is match whisper format then send distinct user, not all
-           int aregame = 0, bregame = 0;
-            while (true) 
-            {
-               // º¯º≠∏¶ πË¡§«ÿ¡÷±‚
-               String input="";
-                 int akk = 0, bkk = 0;
-                 if (aregame == 1) {
-                      for (PrintWriter writer : team_a.values()) 
-                      {
-                         if(aregame==1) {
-                         writer.println("<GIVEWORD>");//¡¯∞‚
-                         writer.println(choice_word[indexword_a]);//¡¯∞‚
-                         indexword_a++;//¡¯∞‚
-                         writer.println("<SEND> ");
-                         writer.println("<START>");
-                         AC = 0;}
-                         aregame=0;
-                         
-                      }//for (printWritera)
-                      input = in.readLine();
-                   }//if(aregame==1)
-                 else if (bregame == 1) {
-                      for (PrintWriter writer : team_b.values()) 
-                      {
-                         if(bregame==1) {writer.println("<GIVEWORD>");//¡¯∞‚
-                         writer.println(choice_word[indexword_b]);//¡¯∞‚
-                         indexword_b++;//¡¯∞‚
-                         writer.println("<SEND> ");
-                         writer.println("<START>");
-                         BC = 0;}
-                         bregame=0;
-                         
-                      }//for(printwriter b)
-                      input = in.readLine();
-                   }//if( bregame==1) 
-                 else
-                 {
-                    input=in.readLine();
-                 }
-                 System.out.println("END");
+
+            /**
+             * Accept messages from this client and broadcast same team member But game is
+             * start then chat is forbidden.
+             */
+
+            int gamea = 0, gameb = 0;
+            while (true) {
+               String input = "";
+               int incount_a = 0, incount_b = 0;
+
+               /*
+                * gamea is 1 when the last person answer and next word show to first user, then
+                * gamea is 0.
+                * 
+                */
+               if (gamea == 1) {
+                  for (PrintWriter writer : team_a.values()) {
+                     if (gamea == 1) /* send next word to first user. */
+                     {
+
+                        writer.println("<GIVEWORD>");
+                        writer.println(choice_word[indexword_a]);
+                        indexword_a++;
+                        writer.println("<SEND> ");
+                        writer.println("<START>");
+                        acount = 0;
+                     }
+                     gamea = 0;
+                  } // for (printWritera)
+                     // input = in.readLine();
+               } // if(gamea==1)
+
+               /*
+                * gameb is 1 when the last person answer and next word show to first user, then
+                * gameb is 0.
+                */
+
+               else if (gameb == 1) {
+                  for (PrintWriter writer : team_b.values()) /* send next word to first user. */
+                  {
+                     if (gameb == 1) {
+                        writer.println("<GIVEWORD>");
+                        writer.println(choice_word[indexword_b]);
+                        indexword_b++;
+                        writer.println("<SEND> ");
+                        writer.println("<START>");
+                        bcount = 0;
+                     }
+                     gameb = 0;
+
+                  } // for(printwriter b)
+
+               } // if( gameb==1)
+
+               input = in.readLine();
                Image k = null;
 
-               System.out.println("END");
+               /**
+                *  if last user answer, then client send Aanswer message to server. 
+                * then check the answer is correct the word.  update score.
+                * then send information the answer is wrong or correct to only last client.
+                * */
                if(input.length()>9) {
-               if(input.substring(0,9).equals("<Aanswer>"))//¥Î¥‰
+               if (input.substring(0, 9).equals("<Aanswer>"))
                {
-                   System.out.println(input.substring(9));
-                   aregame=1;
-                   if (input.substring(9).equals((choice_word[indexword_a-1]))) {
-                      System.out.println("CORRECT");
-                   }//if(¿Ø¿˙ ¥‰¿Ã ∏¬¿ª∂ß) 
-                  else 
+                  gamea = 1;
+                  String result = is_answer(input.substring(9), indexword_a - 1, "A");//check if the answer is correct then +1 if not +0
+                  out.println(result);//send to last client if the answer is right or wrong.
+
+                  for (PrintWriter writer : team_a.values()) /*update score to all user.*/
                   {
-                     System.out.println("INCORRECT");
-                  }//else (¿Ø¿˙ ¥‰ ∆≤∏±∂ß)
-                   String result=is_answer(input.substring(9),indexword_a-1,"A");
-                   out.println(result);
-                   
-                   
-                   for (PrintWriter writer : team_a.values()) 
-                   {
-                      writer.println("<SCORE>");
-                      writer.println(score_a+":"+score_b);
-                         
-                   }   
-                   
-                   APASScheck=0;
-                   
+                     writer.println("<SCORE>");
+                     writer.println(score_a + ":" + score_b);
+                  }
+                  for (PrintWriter writer : team_b.values()) /*update score to all user.*/
+                  {
+                     writer.println("<SCORE>");
+                     writer.println(score_b + ":" + score_a);
+
+                  }
                }
-               
-               if(input.substring(0,9).equals("<Banswer>"))
+
+               /**
+                * same a A
+                * */
+               if (input.substring(0, 9).equals("<Banswer>")) 
                {
-                   System.out.println(input.substring(9));
-                   bregame=1;
-                   if (input.substring(9).equals((choice_word[indexword_b-1]))) {
-                      System.out.println("CORRECT");
-                   }//if(¿Ø¿˙ ¥‰¿Ã ∏¬¿ª∂ß) 
-                  else 
-                  {
-                     System.out.println("INCORRECT");
-                  }//else (¿Ø¿˙ ¥‰ ∆≤∏±∂ß)
-                   String result=is_answer(input.substring(9),indexword_b-1,"B");
-                   out.println(result);
-                   for (PrintWriter writer : team_b.values()) 
-                   {
-                      writer.println("<SCORE>");
-                      writer.println(score_b+":"+score_a);
-                         
-                   }
-                   BPASScheck=0;
-               }
-               
-               }
-               if (input.equals("<send>")) {
-            	   System.out.println("inbaby");
-                  int wow = 0;
-                  int wow1 = 0;
-                  int wow3 = 0;
-                  int wow4 = 0;
-                  // Ateam get the picture from client.
-                  for (PrintWriter writer : team_a.values()) {
-                  if (name.startsWith("<A> ")) {
-                	 
-                	  Socket send = new Socket();
-                	  FileInputStream fin2;
-                     if (AC == akk) {
-                    	 if(AC==0)
-                         {
-                        	 APASScheck=1; //signal to stop sending "nothing"
-                         }   
-                    	 while (wow == 0) {
-                               chattingcheck = 1;
-                               ServerSocket soc2 = new ServerSocket(11111);
-                               
-                               int count = 0;
-                               writer.println("<CANVAS>");
-                               System.out.println("Server start");
-                               send = soc2.accept();
-                               System.out.println("Client accept");
-                               InputStream in2 = null;
-                               FileOutputStream out2 = null;
-
-                               in2 = send.getInputStream();
-                               DataInputStream din = new DataInputStream(in2);
-
-                               int data = din.readInt();
-                               File file = new File("C:\\2-2\\server_get.png");
-                               out2 = new FileOutputStream(file);
-
-                               byte[] buffer = new byte[5000];
-                               int len;
-                               int temp;
-                               temp = data;
-                               System.out.println(data);
-                               for (; data > 0; data--) {
-                                  len = in2.read(buffer);
-                                  out2.write(buffer, 0, len);
-                                  String queue = in.readLine();
-                                  if (Integer.toString(len).equals(queue)) {
-                                     count++;
-                                     System.out.println("hiyo");
-                                  }//if(len)
-                                  System.out.println(len);
-                               }//for(µ•¿Ã≈Õ ¿–æÓø¿¥¬∞≈)
-                               System.out.println("count : " + count);
-                               if (count == temp) {
-                                  System.out.println(count);
-                                  wow = 1;
-                               }//if(¥Ÿ ø‘¥¬¡ˆ »Æ¿Œ)
-                               System.out.println("wow = " + wow);
-                               System.out.println("dfadsf");
-                               out2.flush();
-                               out2.close();
-                               writer.println("<out>");
-                               soc2.close();
-                               System.out.println("hidy");
-
-                            }//while(wow==0)
-                            chattingcheck = 0;
-                         
-                         }//if(ac=akk)
-                         
-                        System.out.println("akk : " + akk);
-                         System.out.println("ACC : " + AC);
-                         if (AC + 1 == akk) {
-                            
-                            chattingcheck = 1;
-                            // give picture to client.
-
-                            while (wow1 == 0) {
-                               chattingcheck = 1;
-                               ServerSocket soc = new ServerSocket(22222);
-
-                               int count = 0;
-                               writer.println("<RECEIVE>");
-                               System.out.println("Server start");
-                               send = soc.accept();
-                               System.out.println("Client accept");
-
-                               in3 = send.getOutputStream();
-                               DataOutputStream din = new DataOutputStream(in3);
-                               DataInputStream dout1 = new DataInputStream(send.getInputStream());
-
-                               fin2 = new FileInputStream(new File("C:\\2-2\\server_get.png"));
-
-                               byte[] buffer2 = new byte[5000];
-                               int len;
-                               int data = 0;
-                               while ((len = fin2.read(buffer2)) > 0) {
-                                  data++;
-                               }//whileµ•¿Ã≈Õ
-                               din.writeInt(data);
-                               fin2.close();
-                               int temp;
-                               temp = data;
-                               System.out.println(data);
-                               fin2 = new FileInputStream(new File("C:\\2-2\\server_get.png"));
-
-                               for (; data > 0; data--) {
-                                  len = fin2.read(buffer2);
-                                  in3.write(buffer2, 0, len);
-                                  writer.println(len);
-                                  System.out.println(len);
-                               }//µ•¿Ã≈Õ æ≤±‚
-
-                               System.out.println("wow1 = " + wow1);
-                               System.out.println("dfadsf");
-
-                               int ch1 = dout1.readInt();
-                               System.out.println("end : " + ch1);
-                               soc.close();
-                               System.out.println("hidy");
-                               if (ch1 == 1) {
-                                  wow1 = 1;
-                               }//ifπÆ
-System.out.println("akk : "+akk);
-                            }//while(wow==0 ¿Œ¡ˆ √º≈©)
-                            
-                            if(akk==2) {
-                                 System.out.println("===="+choice_word[indexword_a-1]);
-                               writer.println("<AANSWERSHEET>");
-                              }
-                            else {
-                               writer.println("<SEND>");
-                               writer.println("<START>");
-                              
-                               }
-                            //else(AC==2) æ∆¥“∂ß
-                            AC++;
-                            break;  
-                         }//if(Ac=akk+1)
-
-                        akk++;
-                     }//teamA ¿« print Writer
-                  }//if A∆¿¿œ∂ß
+                  gameb = 1;
+                  String result = is_answer(input.substring(9), indexword_b - 1, "B");//check if the answer is correct then +1 if not +0
+                  out.println(result);//send to last client if the answer is right or wrong.
                   
-                  // Bteam get the picture from client.
-                  if (name.startsWith("<B> ")) {
-                	  FileInputStream fin3;
-                	 
+                  for (PrintWriter writer : team_b.values()) /*update score to all user.*/
+                  {
+                     writer.println("<SCORE>");
+                     writer.println(score_b + ":" + score_a);
+
+                  }
+
+                  for (PrintWriter writer : team_a.values()) /*update score to all user.*/
+                  {
+                     writer.println("<SCORE>");
+                     writer.println(score_a + ":" + score_b);
+                  }
+               }
+               }
+
+               
+               /** After user painting.
+                * first distinguish the user is team A and team B
+                * if the user sequence is current sequence(== sequence 1 or 2) 
+                *   : server read image file in first client painting file then store in "server_get.png" 
+                * if the user sequence +1 is current sequence(eg-first user then sequence is 2)
+                *   : server send image file to next user.
+                */
+               
+                 if (input.equals("<send>")) {
+                        int check = 0;
+                        int check2 = 0;
+                        int check3 = 0;
+                        int check4 = 0;
+                        // server get the picture from client.
+                        for (PrintWriter writer : team_a.values()) {
+                           if (name.startsWith("<A> ")) {
+
+                              Socket send = new Socket();//create new socket to use transfer file.
+                              FileInputStream fin2;
+                              
+                              /*if the game sequence is user sequence.
+                               * store each user painting in server "server_get.png"
+                               * */
+                              
+                              if (acount == incount_a) {
+                            	  if(acount==0)
+                            	  {
+                            		  APASScheck=1;
+                            	  }
+                                 while (check==0) {
+                                    chattingcheck = 1;
+                                    ServerSocket soc2 = new ServerSocket(11111);
+
+                                    int count = 0;
+                                    writer.println("<CANVAS>");
+                                    send = soc2.accept();// if the clint ready for transfer file, then connection accept.
+                                    
+                                    InputStream in2 = null;
+                                    FileOutputStream out2 = null;
+
+                                    in2 = send.getInputStream();
+                                    DataInputStream din = new DataInputStream(in2);
+
+                                    int data = din.readInt();
+                                    File file = new File("C:\\2-2\\server_get.png");
+                                    out2 = new FileOutputStream(file);
+
+                                    byte[] buffer = new byte[5000];
+                                    int len;
+                                    int temp;
+                                    temp = data;
+                                    
+                                    for (; data > 0; data--) 
+                                    {
+                                       len = in2.read(buffer);
+                                       out2.write(buffer, 0, len);
+                                       String queue = in.readLine();
+                                       if (Integer.toString(len).equals(queue)) {
+                                          count++;
+
+                                       } // if(len)
+                                    } // for(Îç∞Ïù¥ÌÑ∞ ÏùΩÏñ¥Ïò§ÎäîÍ±∞)
+                                    
+                                    
+                                    /*check the data sent by the client is same as the data received by the server. 
+                                     * Until the data is same, repeatedly receive.
+                                     * */
+                                    if (count == temp) 
+                                    {
+                                       //break;
+                                       check = 1;
+                                    } // if(Îã§ ÏôîÎäîÏßÄ ÌôïÏù∏)
+                                    
+                                    out2.flush();
+                                    out2.close();
+                                    writer.println("<OUT>");
+                                    soc2.close();
+
+                                 } // while(check==0)
+                                
+                              } // if(ac=incount_a)
+
+                              
+                              /*
+                               *if the game sequence is user sequence.+1
+                               * send to each user(sequence 2 and 3) painting in server "server_get.png 
+                               * = send to previous user's painting to user.
+                               * 
+                               * */
+                              if (acount + 1 == incount_a) {
+
+                                 
+                                 // give picture to client
+                                 while (check2 == 0) {
+                                    ServerSocket soc = new ServerSocket(22222);
+
+                                    int count = 0;
+                                    writer.println("<RECEIVE>");
+                                    send = soc.accept();
+                                    OutputStream in3 = null;
+                                    FileOutputStream out3 = null;
+
+                                    in3 = send.getOutputStream();
+                                    DataOutputStream din = new DataOutputStream(in3);
+                                    DataInputStream dout1 = new DataInputStream(send.getInputStream());
+
+                                    fin2 = new FileInputStream(new File("C:\\2-2\\server_get.png"));
+
+                                    byte[] buffer2 = new byte[5000];
+                                    int len;
+                                    int data = 0;
+                                    
+                                    /*server open file server_get.png 
+                                     * and read data and send it to user.
+                                     * */
+                                    
+                                    while ((len = fin2.read(buffer2)) > 0) {
+                                       data++;
+                                    } // whileÎç∞Ïù¥ÌÑ∞
+                                    din.writeInt(data);
+                                    fin2.close();
+                                    int temp;
+                                    temp = data;
+                                    fin2 = new FileInputStream(new File("C:\\2-2\\server_get.png"));
+
+                                    /*send data (file) to client.
+                                     * */
+                                    for (; data > 0; data--) 
+                                    {
+                                       len = fin2.read(buffer2);
+                                       in3.write(buffer2, 0, len);
+                                       writer.println(len);
+                                    } 
+
+                                    int ch1 = dout1.readInt();
+                                    soc.close();
+                                    if (ch1 == 1) 
+                                    {
+                                       check2 = 1;
+                                    } // ifÎ¨∏
+
+                                 } // while(check==0 Ïù∏ÏßÄ Ï≤¥ÌÅ¨)
+
+                                 
+                                
+                                 //if the sequence is 3 (game sequence is 0) then user answer.
+                                 if (incount_a == 2) 
+                                 {
+                                    writer.println("<AANSWERSHEET>");
+                                 } 
+                                 
+                                 /*
+                                  * Ïñ¥ÏºÄ ÏÑ§Î™Ö????*/
+                                 else 
+                                 {
+                                    writer.println("<SEND>");
+                                    writer.println("<START>");
+
+                                 }
+                                 // else(AC==2) ÏïÑÎãêÎïå
+                                 acount++;
+                                 break;
+                              } // if(Ac=incount_a+1)
+                              incount_a++;
+                           } // teamA Ïùò print Writer
+                        } // if AÌåÄÏùºÎïå
+                        
+                        
+
+                        /** same as a team
+                         * After user painting.
+                         * first distinguish the user is team A and team B
+                         *  if the user sequence is current sequence(== sequence 1 or 2) 
+                         *     : server read image file in first client painting file then store in "server_get.png"
+                         *  if the user sequence +1 is current sequence(eg-first user then sequence is 2)
+                         *     : server send image file to next user.     
+                         */
+                        if (name.startsWith("<B> ")) {
+                     Socket send2 = new Socket();
+                     FileInputStream fin4;
+
                      for (PrintWriter writer : team_b.values()) {
-                        if (BC == bkk) {
-                        	 if(BC==0)
-                             {
-                            	 BPASScheck=1;
-                             }   	
-                           while (wow3 == 0) {
-                              chattingcheck = 1;
-                              ServerSocket soc = new ServerSocket(33333);
+                        if (bcount == incount_b) {
+                        	if(bcount==0)
+                      	  {
+                      		  BPASScheck=1;
+                      	  }
+                           while (check3 == 0) {
+                              ServerSocket soc3 = new ServerSocket(33333);
 
                               int count = 0;
                               writer.println("<BCANVAS>");
-                              System.out.println("Server start");
-                              send2 = soc.accept();
-                              System.out.println("Client accept");
+                              send2=soc3.accept();
                               InputStream in4 = null;
                               FileOutputStream out4 = null;
 
                               in4 = send2.getInputStream();
-                              DataInputStream din = new DataInputStream(in4);
+                              DataInputStream din4 = new DataInputStream(in4);
 
-                              int data = din.readInt();
-                              File file = new File("C:\\2-2\\server_getB.png");
-                              out4 = new FileOutputStream(file);
+                              int data = din4.readInt();
+                              File file2 = new File("C:\\2-2\\server_getB.png");
+                              out4 = new FileOutputStream(file2);
 
                               byte[] buffer = new byte[5000];
                               int len;
                               int temp;
                               temp = data;
-                              System.out.println(data);
                               for (; data > 0; data--) {
                                  len = in4.read(buffer);
                                  out4.write(buffer, 0, len);
                                  String queue = in.readLine();
                                  if (Integer.toString(len).equals(queue)) {
                                     count++;
-                                    System.out.println("hiyo");
-                                 }//if µ•¿Ã≈Õ ±Ê¿Ã »Æ¿Œ
-                                 System.out.println(len);
-                              }//forπÆ µ•¿Ã≈Õ ¿–±‚
-                              System.out.println("count : " + count);
+
+                                 } // if Îç∞Ïù¥ÌÑ∞ Í∏∏Ïù¥ ÌôïÏù∏
+
+                              } // forÎ¨∏ Îç∞Ïù¥ÌÑ∞ ÏùΩÍ∏∞
+
                               if (count == temp) {
-                                 System.out.println(count);
-                                 wow3 = 1;
-                              }//if ¥Ÿø‘¥¬¡ˆ »Æ¿Œ
-                              System.out.println("wow = " + wow3);
-                              System.out.println("dfadsf");
+
+                                 check3 = 1;
+                              } // if Îã§ÏôîÎäîÏßÄ ÌôïÏù∏
+
                               out4.flush();
                               out4.close();
-                              writer.println("<out>");
-                              soc.close();
-                              System.out.println("hidy");
+                              writer.println("<BOUT>");
+                              soc3.close();
 
-                           }//while(wow==3)
-                           chattingcheck = 0;
+                           } // while(check==3)
+                         
+                        } // if(BC=incount_b)
 
-                        }//if(BC=bkk)
-                        System.out.println("bkk : " + bkk);
-                        System.out.println("BCC : " + BC);
-
-                        if (BC + 1 == bkk) {
-                           chattingcheck = 1;
+                        if (bcount + 1 == incount_b) {
+                          
                            // give picture to client.
 
-                           while (wow4 == 0) {
-                              chattingcheck = 1;
-                              ServerSocket soc = new ServerSocket(44444);
+                           while (check4 == 0) {
+                             
+                              ServerSocket soc4 = new ServerSocket(44444);
 
                               int count = 0;
                               writer.println("<BRECEIVE>");
-                              System.out.println("Server start");
-                              send2 = soc.accept();
-                              System.out.println("Client accept");
 
-                              in6 = send2.getOutputStream();
-                              DataOutputStream din2 = new DataOutputStream(in6);
-                              DataInputStream dout2 = new DataInputStream(send2.getInputStream());
+                              send2 = soc4.accept();
+                              OutputStream in5 = null;
+                              FileOutputStream out5 = null;
 
-                              fin3 = new FileInputStream(new File("C:\\2-2\\server_getB.png"));
+                              in5 = send2.getOutputStream();
+                              DataOutputStream din3 = new DataOutputStream(in5);
+                              DataInputStream dout3 = new DataInputStream(send2.getInputStream());
+
+                              fin4 = new FileInputStream(new File("C:\\2-2\\server_getB.png"));
 
                               byte[] buffer2 = new byte[5000];
                               int len;
                               int data = 0;
-                              while ((len = fin3.read(buffer2)) > 0) {
+                              while ((len = fin4.read(buffer2)) > 0) {
                                  data++;
-                              }//while(µ•¿Ã≈Õ ¿–±‚)
-                              din2.writeInt(data);
-                              fin3.close();
+                              } // while(Îç∞Ïù¥ÌÑ∞ ÏùΩÍ∏∞)
+                              din3.writeInt(data);
+                              fin4.close();
                               int temp;
                               temp = data;
-                              System.out.println(data);
-                              fin3 = new FileInputStream(new File("C:\\2-2\\server_getB.png"));
+
+                              fin4 = new FileInputStream(new File("C:\\2-2\\server_getB.png"));
 
                               for (; data > 0; data--) {
-                                 len = fin3.read(buffer2);
-                                 in6.write(buffer2, 0, len);
+                                 len = fin4.read(buffer2);
+                                 in5.write(buffer2, 0, len);
                                  writer.println(len);
-                                 System.out.println(len);
-                              }//forπÆ µ•¿Ã≈Õ ∫∏≥ª±‚
+                              } // forÎ¨∏ Îç∞Ïù¥ÌÑ∞ Î≥¥ÎÇ¥Í∏∞
 
-                              System.out.println("wow1 = " + wow4);
-                              System.out.println("dfadsf");
-
-                              int ch1 = dout2.readInt();
-                              System.out.println("end : " + ch1);
-                              soc.close();
-                              System.out.println("hidy");
+                              int ch1 = dout3.readInt();
+                              soc4.close();
                               if (ch1 == 1) {
-                                 wow4 = 1;
-                              }//if»Æ¿Œ«œ¥¬∞≈
+                                 check4 = 1;
+                              } // ifÌôïÏù∏ÌïòÎäîÍ±∞
 
-                           }//while(wow4==0) »Æ¿Œ
-                              if(bkk==2) {
-                                   System.out.println("===="+choice_word[indexword_b-1]);
-                                 writer.println("<BANSWERSHEET>");
-                                }
-                           
-                           //if(BC==1)- ∏∂¡ˆ∏∑ªÁ∂˜¿Œ¡ˆ »Æ¿Œ 
+                           } // while(check4==0) ÌôïÏù∏
+                           if (incount_b == 2) {
+                             writer.println("<BANSWERSHEET>");
+             
+                           } // if(BC==1)- ÎßàÏßÄÎßâÏÇ¨ÎûåÏù∏ÏßÄ ÌôïÏù∏
                            else {
                               writer.println("<SEND>");
                               writer.println("<START>");
-                              
-                           }//else(BC!=1)-∏∂¡ˆ∏∑ ªÁ∂˜ X
-                              BC++;
-                              break;  
-                        }//if(BC==bkk+1)»Æ¿Œ
-                        
-                        bkk++;
-                     }//for(B∆¿ writer)
+                           
+                           } // else(BC!=1)-ÎßàÏßÄÎßâ ÏÇ¨Îûå X
+                           bcount++;
+                           break;
+                        } // if(BC==incount_b+1)ÌôïÏù∏
 
-                  }//if(≥◊¿”¿Ã B¿œãö)
-               }//if(≈¨∂Û¿Ãæ∆Æø°§√ send∫∏≥æ∂ß)
-               if(input.equals("<PASS>")) //when the pass button is pressed
-               {
-            	  
-            	   if (name.startsWith("<A> ")) {
-            	    for (PrintWriter writer : team_a.values()) 
-                    {                       
-                        writer.println("<GIVEWORD>");//¡¯∞‚
-                        writer.println(choice_word[indexword_a]);//¡¯∞‚
-                        indexword_a++;//¡¯∞‚
-                        break;    
-                    }//send the next word to first person.
-            	    }
-            	   else if(name.startsWith("<B> "))
-            			   {
-            		    for (PrintWriter writer : team_b.values()) 
-                       {                       
-                             writer.println("<GIVEWORD>");//¡¯∞‚
-                             writer.println(choice_word[indexword_b]);//¡¯∞‚
-                             indexword_b++;//¡¯∞‚
-                             break;  
-            			   }
-               }
-               if (input == null) 
-               {
+                        incount_b++;
+                     } // for(BÌåÄ writer)
+
+                  } // if(ÎÑ§ÏûÑÏù¥ BÏùºÎñÑ)
+               } // if(ÌÅ¥ÎùºÏù¥Ïñ∏Ìä∏Ïóê„Öì sendÎ≥¥ÎÇºÎïå)
+                 
+                 
+                 
+                 if(input.equals("<PASS>")) //when the pass button is pressed
+                 {
+                   
+                    if (name.startsWith("<A> ")) {
+                     for (PrintWriter writer : team_a.values()) 
+                      {                       
+                          writer.println("<GIVEWORD>");//ÏßÑÍ≤∏
+                          writer.println(choice_word[indexword_a]);//ÏßÑÍ≤∏
+                          indexword_a++;//ÏßÑÍ≤∏
+                          break;    
+                      }//send the next word to first person.
+                     }
+                    else if(name.startsWith("<B> "))
+                          {
+                        for (PrintWriter writer : team_b.values()) 
+                         {                       
+                               writer.println("<GIVEWORD>");//ÏßÑÍ≤∏
+                               writer.println(choice_word[indexword_b]);//ÏßÑÍ≤∏
+                               indexword_b++;//ÏßÑÍ≤∏
+                               break;  
+                          }
+                 }}
+
+                if (input == null) {
 
                   return;
                }
-               System.out.println("anjrh "+input);
-               if(APASScheck==0) {
-               for (PrintWriter writer : team_a.values()) 
-               {                       
-                   writer.println("nothing");//¡¯∞‚
-                   break;    
-               }}
-               if(BPASScheck==0) {
-               for (PrintWriter writer : team_b.values()) 
-               {                       
-                 writer.println("nothing");
-                 break;
-       	       } }} // make client not to wait input.
-               // pop up the drowing board to first man of team.
 
-               if (chattingcheck == 0) {
-                  if (input.equals("<send>")) 
-                  {
+               if(APASScheck==0) {
+                   for (PrintWriter writer : team_a.values()) 
+                   {                       
+                       writer.println("nothing");//ÏßÑÍ≤∏
+                       break;    
+                   }}
+                   if(BPASScheck==0) {
+                   for (PrintWriter writer : team_b.values()) 
+                   {                       
+                     writer.println("nothing");
+                     break;
+                     } }
+               /*broadcast message to same team user. if the chat is accepted
+                * the game start chattingcheck set 1.
+                * */
+               if (chattingcheck == 0) 
+               {
+                  if (input.equals("<send>")||input.equals("nothing")||input.startsWith("<Aanswer>")||input.startsWith("<Banswer>")) {
                      continue;
                   }
+
                   /* braodcast message all user but same team! */
                   for (HashMap.Entry<String, PrintWriter> entry : users.entrySet()) {
                      if (name.startsWith("<A> ")) {
                         for (PrintWriter writer : team_a.values()) {
                            writer.println("MESSAGE " + name + ": " + input);
-                        }//forπÆ (printwriter-a)
+                        } // forÎ¨∏ (printwriter-a)
                         break;
-                     }//¿Ã∏ß A∆¿¿∏∑Œ Ω√¿€
+                     } // Ïù¥Î¶Ñ AÌåÄÏúºÎ°ú ÏãúÏûë
                      if (name.startsWith("<B> ")) {
                         for (PrintWriter writer : team_b.values()) {
                            writer.println("MESSAGE " + name + ": " + input);
-                        }//for(printwriter-b)
+                        } // for(printwriter-b)
                         break;
-                     }//if ¿Ã∏ß B∆¿¿∏∑Œ Ω√¿€
-                  }//≈´ forπÆ
-               }//if(Chatting check==0 -√§∆√ «„øÎ)
-            }//øœ¿¸ ≈´ whileπÆ!
+                     } // if Ïù¥Î¶Ñ BÌåÄÏúºÎ°ú ÏãúÏûë
+                  } // ÌÅ∞ forÎ¨∏
+               } // if(Chatting check==0 -Ï±ÑÌåÖ ÌóàÏö©)
+                 }
+            // ÏôÑÏ†Ñ ÌÅ∞ whileÎ¨∏!
 
-         }//try
+         } // try
          catch (IOException e) {
             System.out.println(e);
-         } finally 
-         {
+         } finally {
             // This client is going down! Remove its name and its print
 
             // writer from the sets, and close its socket.
@@ -731,87 +743,156 @@ System.out.println("akk : "+akk);
                if (name.startsWith("<A> ")) {
                   team_a.remove(name);
                   ateamout--;
-               }//if(¿Ã∏ß A∆¿)
-               if (name.startsWith("<B> ")) 
-               {
+                  a--;
+               } // if(Ïù¥Î¶Ñ AÌåÄ)
+               if (name.startsWith("<B> ")) {
                   team_b.remove(name);
                   bteamout--;
-               }//if(¿Ã∏ß B∆¿)
-            }//if(name!=null)
-            if (out != null) 
-            {
+                  b--;
+               } // if(Ïù¥Î¶Ñ BÌåÄ)
+            } // if(name!=null)
+            if (out != null) {
                users.remove(out);
+              
                /* The exit user info(name) broadcast all user. */
                for (PrintWriter writer : users.values()) {
-                  writer.println("MESSAGE " + "***" + name + "¥‘¿Ã ≈¿Â«œºÃΩ¿¥œ¥Ÿ. ***");
-               }//for(Printwriter-≈¿Âº“Ωƒ)
-            }//if(out!=null)
+                  writer.println("MESSAGE " + "***" + name + "ÎãòÏù¥ Ìá¥Ïû•ÌïòÏÖ®ÏäµÎãàÎã§. ***");
+                  writer.println("<USEROUT>");
+                    writer.println(users.size());
+                    
+                      for (int i = 0; i < user_howmuch; i++) {
+                         if(names1[i].equals(name))
+                         {
+                        	 for(int j=i; j<user_howmuch-1; j++)
+                        	 {
+                        		 names1[j]=names1[j+1];
+                        	 }
+                         }
+                    	  
+                   }
+                      for (int i = 0; i < user_howmuch; i++) {
+                        writer.println(names1[i]);
+                      }
+                      user_howmuch--;
+               } // for(Printwriter-Ìá¥Ïû•ÏÜåÏãù)
+            } // if(out!=null)
 
             try {
                socket.close();
 
             } catch (IOException e) {
 
-            }//catch
-         }//finally
-      }//run ∏ﬁº“µÂ
-   }//handler class
-   
-   
-   private static void random_category() throws IOException 
-   {   
-      read_file();
-      Random random=new Random();
-      choice_category=random.nextInt(6);//0~5
-      random_word();
-   }//¡¯∞‚
+            } // catch
+         } // finally
+      }// run Î©îÏÜåÎìú
+   // handler class
+   }
+   /*give category
+    * give category and order to all users. 
+    *  give word to first user and provide painting panel
+    */
+   private static void give_category(String team) {
+      if (team.equals("A")) {
+         for (PrintWriter writer : team_a.values()) {
+            int seq = asequence + 1;
+            writer.println("<SEQUENCE>" + seq);// sequence
+            writer.println("<GIVECATEGORY>");// category
+            writer.println(category[choice_category]);// send category to client.
+            if (asequence == 0) {
+               writer.println("<GIVEWORD>");
+               writer.println(choice_word[indexword_a]);// give word.
+               indexword_a++;
+               writer.println("<SEND> ");
+               writer.println("<START>");
+               // chat is forbidden.
 
-   private static void random_word() 
+            }
+            asequence++;
+         } // for(team a)
+      } else if (team.equals("B")) {
+         for (PrintWriter writer : team_b.values()) {
+        	 int bseq=bsequence+1;
+            writer.println("<SEQUENCE>"+bseq);
+            writer.println("<GIVECATEGORY>");
+            writer.println(category[choice_category]);
+
+            if (bsequence == 0) {
+               writer.println("<GIVEWORD>");
+               writer.println(choice_word[indexword_b]);
+               indexword_b++;// index is different because the game speeds can be different.
+               writer.println("<SEND> ");
+               writer.println("<START>");
+               // chat is forbidden.
+            } // if(bsequence==0)
+            bsequence++;
+         } // for(team_b)
+      }
+
+   }
+
+   /* radnom_category
+    * the integer choice randomly(0~5)
+    * then by the integer category is decide.
+    * */
+   private static void random_category() throws IOException 
    {
-      
-      for(int i=0;i<word[choice_category].length;i++) 
-      {
-         if(word[choice_category][i]==null)
+      read_file();
+      Random random = new Random();
+      choice_category = random.nextInt(6);// 0~5
+      random_word();
+   }
+
+   /*random_word
+    * words in the selected category are arranged in random order.
+    * */
+   private static void random_word() {
+
+      for (int i = 0; i < word[choice_category].length; i++) {
+         if (word[choice_category][i] == null)
             break;
          size_word++;
       }
-      String temp[]=new String[size_word];
-      int random[]=new int[size_word];
-      Random r=new Random();
-      for(int i=0;i<size_word;i++) 
-      {
-         random[i]=r.nextInt(size_word);
-         for(int j=0;j<i;j++) 
-         {
-            if(random[i]==random[j])
+      String temp[] = new String[size_word];
+      int random[] = new int[size_word];
+      Random r = new Random();
+      for (int i = 0; i < size_word; i++) {
+         random[i] = r.nextInt(size_word);
+         for (int j = 0; j < i; j++) {
+            if (random[i] == random[j])
                i--;
          }
       }
-      for(int i=0;i<size_word;i++) 
-      {
-         choice_word[i]=word[choice_category][random[i]];
-         
+      for (int i = 0; i < size_word; i++) {
+         choice_word[i] = word[choice_category][random[i]];
+
       }
-   }//¡¯∞‚
-   private static String is_answer(String answer, int number,String team)/*number¿∫ ∏Óπ¯¬∞ ¡¯«‡¡ﬂ¿Œµ.*/ 
+   }
+
+   /* is_answer
+    * parameter :answer, number== index, team="A" or "B"
+    * check the answer is correct.
+    * if answer is correct score+1 then return <"ANSWERCORRECT">(this send to last user)
+    * if not then return "<ANSWERWORNG>"+choice_word (this send to last user) 
+    */
+   private static String is_answer(String answer, int number, String team)
    {
-      if(answer.equalsIgnoreCase(choice_word[number])) 
-      {
-         if(team.startsWith("A")) 
-         {
+      if (answer.equalsIgnoreCase(choice_word[number])) {
+         if (team.startsWith("A")) {
             score_a++;
-         }
-         else 
-         { 
+         } else {
             score_b++;
          }
          return "<ANSWERCORRECT>";
       }
-      return "<ANSWERWRONG>"+choice_word[number];
-   }//¡¯∞‚
-   private static void read_file() throws IOException {
+      return "<ANSWERWRONG>" + choice_word[number];
+   }
 
-      FileInputStream input = new FileInputStream("C:\\2-2\\category.txt");// ¡¯∞‚
+   /*read file 
+    *(store category, word)
+    * then storing the infomation in array
+    * */
+   private static void read_file() throws IOException {
+      FileInputStream input = new FileInputStream("C:\\2-2\\category.txt");
       InputStreamReader reader = new InputStreamReader(input, "UTF-8");
       BufferedReader read = new BufferedReader(reader);
 
@@ -823,5 +904,5 @@ System.out.println("akk : "+akk);
             word[i][j] = temp[j];
          }
       }
-   }//¡¯∞‚
+   }
 }
