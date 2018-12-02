@@ -138,840 +138,1145 @@ import javax.swing.plaf.synth.SynthSeparatorUI;
  * 
  */
 
-public class Client {
+public class Client 
+{
+
+   /*communication for server.*/
+   BufferedReader in;
+   static PrintWriter out;
+   OutputStream out2;
+   InputStream in2;
+   
+   /*file transfer.*/
+   FileInputStream fin;
+   FileOutputStream fin2;
+   
+   /*GUI frame&panel*/
+   JFrame frame = new JFrame();
+   JPanel panel = new JPanel();
+   JPanel backgrounda = new JPanel();
+   JPanel backgroundb = new JPanel();
+   static public ImagePanel welcomePanel = new ImagePanel(new ImageIcon("C:\\2-2\\black.jpg").getImage());//game panel 
+   static public JPanel resultPanel=new JPanel();//result panel.
+   static JFrame resultframe=new JFrame();
+   
+   JTextField textField = new JTextField(40);// send to message
+   JTextArea messageArea = new JTextArea(30, 40);// chatting room
+   
+   /*specify for user.*/
+   JLabel namelist_a = new JLabel("A team");
+   JLabel namelist_b = new JLabel("B team");
+   
+   JLabel label = new JLabel("WAIT");// label for starter.
+   JLabel timerLabel = new JLabel("TIMER");//label for timer
+   JLabel label_word = new JLabel("Word");// label for word.(only to first user)
+   JLabel label_category;//label for category
+
+   static JLabel label_score = new JLabel("0:0");//label for score
+
+   static int PASSPRESSED=0;// check if first user press pass button.
+   static int[] length = new int[20];
+   static String seqnum; // game sequence.  
+   public static int check = 0;//??
+   
+   static int timercheck = 0;// check if time is over.
+   int SEQNUM=0;//??
+   
+   
+   RelaySketch relay = new RelaySketch();
+
+   /**
+    * 
+    * 
+    * 
+    * Constructs the client by laying out the GUI and registering a
+    * 
+    * 
+    * 
+    * listener with the textfield so that pressing Return in the
+    * 
+    * 
+    * 
+    * listener sends the textfield contents to the server. Note
+    * 
+    * 
+    * 
+    * however that the textfield is initially NOT editable, and
+    * 
+    * 
+    * 
+    * only becomes editable AFTER the client receives the NAMEACCEPTED
+    * 
+    * 
+    * 
+    * message from the server.
+    * 
+    * 
+    * 
+    */
+   
+   /**show result
+    * if game is over, this function start.
+    * if user is A team: scoreA: scoreB
+    * if user is B team  scoreB: scoreA
+    * so first score> second score : show WIN
+    *    first score< second score: show LOSE
+    *    first score= second score: show DRAW
+    * */
+   public static void show_result() 
+   { 
+     
+      resultframe.setSize(500, 300);
+      resultPanel.setBackground(Color.WHITE);
+      String result_end=label_score.getText();   
+      JLabel result_score= new JLabel();
+      result_score.setSize(130, 88);
+      result_score.setLocation(165, 44);
+      result_score.setFont(new Font("Arial Rounded MT Bold", Font.BOLD, 50));
+      
+      int score_first= Integer.parseInt(result_end.substring(0,result_end.indexOf(":")));
+      int score_second= Integer.parseInt(result_end.substring(result_end.indexOf(":")+1));
+      if(score_first>score_second) 
+      {
+         result_score.setText("WIN");
+         result_score.setForeground(Color.BLUE);
 
-	JLabel label = new JLabel("WAIT");
+      }
+      else if(score_first<score_second) 
+      {
+         result_score.setText("LOSE");
+         result_score.setForeground(Color.GRAY);
 
-	JLabel label_category;
+      }
+      else if(score_first==score_second) 
+      {
+         result_score.setText("DRAW");
+         result_score.setForeground(Color.GREEN);
 
-	BufferedReader in;
+      }
+     resultframe.add(resultPanel);
+     resultPanel.add(result_score);
+     resultframe.setVisible(true);
+   }
+   /**correct_answer
+    * if answer is correct, then the pop up(answer correct) is show to last user. 
+    * */
+   private void correct_answer()
 
-	static PrintWriter out;
+   {
 
-	JFrame frame = new JFrame();
+      JOptionPane.showMessageDialog(frame, "The answer is correct!");
 
-	static ImagePanel welcomePanel = new ImagePanel(new ImageIcon("C:\\2-2\\black.jpg").getImage());// 찬빈
+   }
+      
+   /**wrong_answer
+    * if answer is wrong, then pop up(answer is wrong + original answer) show to last user.
+    * */
+   private void wrong_answer(String word)
 
-	// static ImagePanel welcomePanel=new ImagePanel(new
-	// ImageIcon("C:\\Users\\김진겸\\eclipse-workspace\\Network\\image\\black.jpg").getImage());//진겸
+   {
+      JOptionPane.showMessageDialog(frame, "answer is " + word, "The answer is worng", JOptionPane.PLAIN_MESSAGE);
+   }
 
-	JLabel timerLabel = new JLabel("TIMER");
+   /**get_answer
+    * To last user, send answer panel.
+    * if enter answer then send to server.
+    * */
+   private String get_answer() 
+   {
 
-	JLabel label_word = new JLabel("Word");// 진겸
+      return JOptionPane.showInputDialog(
 
-	JPanel panel = new JPanel();
+            frame,
 
-	JTextField textField = new JTextField(40);
+            "Enter your word you think it's answer ※no capital :",
 
-	JTextArea messageArea = new JTextArea(30, 40);
+            "ANSWER",
 
-	JButton button2 = new JButton("Send");
-	JPanel backgrounda = new JPanel();
+            JOptionPane.QUESTION_MESSAGE);
 
-	JPanel backgroundb = new JPanel();
+   };
+   
+   /**set_GUI
+    * set GUI for game panel.
+    * */
+   private void set_GUI() 
+   {
+       frame.setSize(1280, 720);
 
-	JLabel namelist_a = new JLabel("A team");
+         frame.getContentPane().add(welcomePanel, BorderLayout.NORTH);
 
-	JLabel namelist_b = new JLabel("B team");
+         panel.setBounds(852, 102, 412, 579);
+         frame.setResizable(false);// 사이즈 조정x
 
-	static int[] length = new int[20];
+         frame.setLocationRelativeTo(null);
 
-	OutputStream out2;
+         textField.setEditable(false);
 
-	FileInputStream fin;
+         panel.add(textField, "North");
 
-	FileOutputStream fin2;
+         panel.add(messageArea);
+         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);//은서
+         messageArea.setEditable(false);
+         messageArea.setLineWrap(true);//은서
+         
+         panel.add(new JScrollPane(messageArea)); //은서
+         
+         panel.setBackground(Color.ORANGE);
 
-	InputStream in2;
+         panel.setBounds(852, 102, 412, 579);
 
-	JLabel label_score_a = new JLabel("0:0");
+         welcomePanel.add(panel);
 
-	int wow = 0;
+         welcomePanel.add(timerLabel, "NORTH");
 
-	RelaySketch relay = new RelaySketch();
+         timerLabel.setForeground(Color.GRAY);
 
-	public static int check = 0;
+         timerLabel.setFont(new Font("Arial Rounded MT Bold", Font.BOLD | Font.ITALIC, 54));
 
-	static int timercheck = 0;
+         timerLabel.setBounds(554, 10, 462, 82);
 
-	/**
-	 * 
-	 * 
-	 * 
-	 * Constructs the client by laying out the GUI and registering a
-	 * 
-	 * 
-	 * 
-	 * listener with the textfield so that pressing Return in the
-	 * 
-	 * 
-	 * 
-	 * listener sends the textfield contents to the server. Note
-	 * 
-	 * 
-	 * 
-	 * however that the textfield is initially NOT editable, and
-	 * 
-	 * 
-	 * 
-	 * only becomes editable AFTER the client receives the NAMEACCEPTED
-	 * 
-	 * 
-	 * 
-	 * message from the server.
-	 * 
-	 * 
-	 * 
-	 */
+         label.setForeground(Color.RED);
 
-	private void correct_answer()
+         label.setFont(new Font("Arial Rounded MT Bold", Font.BOLD | Font.ITALIC, 54));
 
-	{
+         label.setBounds(981, 26, 204, 82);
 
-		JOptionPane.showMessageDialog(frame, "The answer is correct!");
+         welcomePanel.add(label);
 
-	}
+         label_category = new JLabel("Category");
 
-	private void wrong_answer(String word)
+         label_category.setForeground(Color.GRAY);
 
-	{
-		System.out.println("hi");
+         label_category.setFont(new Font("Arial Rounded MT Bold", Font.BOLD | Font.ITALIC, 45));
 
-		JOptionPane.showMessageDialog(frame, "answer is " + word, "The answer is worng", JOptionPane.PLAIN_MESSAGE);
-	}
+         label_category.setBounds(14, 10, 266, 68);
 
-	private String getanswer() {
+         welcomePanel.add(label_category);// 진겸
 
-		return JOptionPane.showInputDialog(
+         label_word.setForeground(Color.GRAY);
 
-				frame,
+         label_word.setFont(new Font("Arial Rounded MT Bold", Font.BOLD | Font.ITALIC, 40));
 
-				"Enter your word you think it's answer ※no capital :",
+         label_word.setBounds(14, 90, 266, 56);
 
-				"ANSWER",
+         welcomePanel.add(label_word);
 
-				JOptionPane.QUESTION_MESSAGE);
+         welcomePanel.add(backgrounda);
+         backgrounda.setBackground(Color.WHITE);
+         backgrounda.setBounds(550, 290, 250, 172);
+         backgrounda.add(namelist_a);
+         namelist_a.setFont(new Font("Arial Rounded MT Bold", Font.BOLD, 13));
 
-	};// 정답판넬//진겸
+         welcomePanel.add(backgroundb);
+         backgroundb.setBackground(Color.WHITE);
+         backgroundb.setBounds(550, 490, 250, 172);
+         backgroundb.add(namelist_b);
+         namelist_b.setFont(new Font("Arial Rounded MT Bold", Font.BOLD, 13));
 
-	public Client() {
+         label_score.setForeground(Color.GRAY);
 
-		// Layout GUI
+         label_score.setFont(new Font("Arial Rounded MT Bold", Font.BOLD | Font.ITALIC, 50));
 
-		frame.setSize(1280, 720);
+         label_score.setBounds(547, 86, 103, 56);
 
-		frame.getContentPane().add(welcomePanel, BorderLayout.NORTH);
+         welcomePanel.add(label_score);
+         JButton PassButton = new JButton("PASS");
+         PassButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent arg0) {
+               out.println("<PASS>");
+               PASSPRESSED=1;
+            }
+         });
+         PassButton.setBounds(364, 102, 105, 27);
+         welcomePanel.add(PassButton);
+         
+         label_score.setVisible(false);
 
-		frame.setResizable(false);// 사이즈 조정x
+         label_word.setVisible(false);// 진겸
 
-		frame.setLocationRelativeTo(null);
 
-		textField.setEditable(false);
+      
+   }
+   public Client() {
 
-		panel.add(textField, "North");
+      set_GUI();
+      textField.addActionListener(new ActionListener() {
 
-		panel.add(messageArea);
+         /**
+          * 
+          * 
+          * 
+          * Responds to pressing the enter key in the textfield by sending
+          * 
+          * 
+          * 
+          * the contents of the text field to the server. Then clear
+          * 
+          * 
+          * 
+          * the text area in preparation for the next message.
+          * 
+          * 
+          * 
+          */
 
-		messageArea.setEditable(false);
+         public void actionPerformed(ActionEvent e)
 
-		panel.add(new JScrollPane(), "Center");
+         {
 
-		panel.setBackground(Color.ORANGE);
+            out.println(textField.getText());
 
-		panel.setBounds(852, 102, 412, 579);
+            textField.setText("");
 
-		welcomePanel.add(panel);
+         }
 
-		welcomePanel.add(timerLabel, "NORTH");
+      });
 
-		timerLabel.setForeground(Color.GRAY);
+   }
+   
+   
 
-		timerLabel.setFont(new Font("Arial Rounded MT Bold", Font.BOLD | Font.ITALIC, 54));
+   /**
+    * 
+    * 
+    * 
+    * Connects to the server then enters the processing loop.
+    * 
+    * 
+    * 
+    * @return
+    * 
+    * 
+    * 
+    * @throws IOException
+    * 
+    * 
+    * 
+    * @throws ClassNotFoundException
+    * 
+    * 
+    * 
+    * @throws InterruptedException
+    * 
+    * 
+    * 
+    * @throws UnknownHostException
+    * 
+    * 
+    * 
+    */
 
-		timerLabel.setBounds(554, 10, 462, 82);
+   public void run() throws IOException, ClassNotFoundException, InterruptedException {
 
-		label.setForeground(Color.RED);
+      String serverAddress = null;
 
-		label.setFont(new Font("Arial Rounded MT Bold", Font.BOLD | Font.ITALIC, 54));
+      while (true)
 
-		label.setBounds(981, 26, 204, 82);
+      {
 
-		welcomePanel.add(label);
+         if (RelaySketch.check_IP == 1)
 
-		label_category = new JLabel("Category");
+         {
 
-		label_category.setForeground(Color.GRAY);
+            serverAddress = RelaySketch.IPADDRESS;
 
-		label_category.setFont(new Font("Arial Rounded MT Bold", Font.BOLD | Font.ITALIC, 45));
+            break;
 
-		label_category.setBounds(14, 10, 266, 68);
+         }
 
-		welcomePanel.add(label_category);// 진겸
+         System.out.print("");
 
-		label_word.setForeground(Color.GRAY);
+      }
 
-		label_word.setFont(new Font("Arial Rounded MT Bold", Font.BOLD | Font.ITALIC, 40));
+      // Make connection and initialize streams
 
-		label_word.setBounds(14, 90, 266, 56);
+      Socket socket = new Socket(serverAddress, 5880);
 
-		welcomePanel.add(label_word);
+      in = new BufferedReader(new InputStreamReader(
 
-		welcomePanel.add(backgrounda);
-		backgrounda.setBackground(Color.WHITE);
-		backgrounda.setBounds(550, 290, 250, 172);
-		backgrounda.add(namelist_a);
-		namelist_a.setFont(new Font("Arial Rounded MT Bold", Font.BOLD, 13));
+            socket.getInputStream()));
 
-		welcomePanel.add(backgroundb);
-		backgroundb.setBackground(Color.WHITE);
-		backgroundb.setBounds(550, 490, 250, 172);
-		backgroundb.add(namelist_b);
-		namelist_b.setFont(new Font("Arial Rounded MT Bold", Font.BOLD, 13));
+      out = new PrintWriter(socket.getOutputStream(), true);
 
-		label_score_a.setForeground(Color.GRAY);
+      // Process all messages from server, according to the protocol.
 
-		label_score_a.setFont(new Font("Arial Rounded MT Bold", Font.BOLD | Font.ITALIC, 50));
+      while (true)
 
-		label_score_a.setBounds(547, 86, 103, 56);
+      {
 
-		welcomePanel.add(label_score_a);
+         UserRepaint b = null;
 
-		label_score_a.setVisible(false);
+         String line = in.readLine();
 
-		label_word.setVisible(false);// 진겸
+         if (line.startsWith("<SUBMITNAME>")) {
+            while (true) {
+               if (RelaySketch.check_name == 1)
 
-		// Add Listeners
+               {
 
-		textField.addActionListener(new ActionListener() {
+                  out.println(RelaySketch.NAME);
+                  break;
 
-			/**
-			 * 
-			 * 
-			 * 
-			 * Responds to pressing the enter key in the textfield by sending
-			 * 
-			 * 
-			 * 
-			 * the contents of the text field to the server. Then clear
-			 * 
-			 * 
-			 * 
-			 * the text area in preparation for the next message.
-			 * 
-			 * 
-			 * 
-			 */
+               } // if(check==name 끝
 
-			public void actionPerformed(ActionEvent e)
+               System.out.print("");
 
-			{
+            } // while 끝
 
-				out.println(textField.getText());
+         } else if (line.startsWith("<TEAMVIEW>")) {
+            namelist_a.setText("A team");
+            namelist_b.setText("B team");
+            String many = in.readLine();
+            int acount = 0, bcount = 0;
+            String[] namelist_A = new String[30];
+            String[] namelist_B = new String[30];
+            System.out.println(line);
+            for (int i = 0; i < Integer.parseInt(many); i++) {
+               String names = in.readLine();
+               if (names.charAt(0) == '<' && names.charAt(2) == '>') {// 처음 들어왔을 때
+                  System.out.println("hihi");
+                  if (names.substring(0, 3).equals("<A>")) {
+                     namelist_A[i - bcount] = names;
+                     acount++;
+                  } else if (names.substring(0, 3).equals("<B>")) {
+                     namelist_B[i - acount] = names;
+                     bcount++;
+                  }
 
-				textField.setText("");
+                  System.out.println("hihi");
+               }
+            }
+            /*
+             * else if(line.matches(".*퇴장.*")) {//퇴장했을 때 int index=line.indexOf("님"); String
+             * name=line.substring(14,index);
+             * 
+             * if(line.matches(".*<A>.*")) { for(int i=0;i<namelist_A.size();i++) {
+             * if((namelist_A.get(i)).matches(name)) { namelist_A.remove(i); } } //들어온 이름이랑
+             * list A에 있는 이름이랑 비교해서 같으면 //A에서 remove } else if(line.matches(".*<B>.*")) {
+             * for(int i=0;i<namelist_B.size();i++) { if((namelist_B.get(i)).matches(name))
+             * { namelist_B.remove(i); } }
+             * 
+             * //들어온 이름이랑 list B에 있는 이름이랑 비교해서 같으면 //B에서 remove } }
+             */
+            String astring = "", bstring = "";
+            namelist_a.setText("<html>" + namelist_a.getText() + "<br>" + namelist_A[0] + "<br>" + namelist_A[1]
+                  + "<br>" + namelist_A[2] + "</html>");
 
-			}
+            namelist_b.setText("<html>" + namelist_b.getText() + "<br>" + namelist_B[0] + "<br>" + namelist_B[1]
+                  + "<br>" + namelist_B[2] + "</html>");
 
-		});
+         } 
+         else if(line.startsWith("<USEROUT>"))
+         {
+             namelist_a.setText("A team");
+              namelist_b.setText("B team");
+              String many = in.readLine();
+              int acount = 0, bcount = 0;
+              String[] namelist_A = new String[30];
+              String[] namelist_B = new String[30];
+              System.out.println(line);
+              for (int i = 0; i < Integer.parseInt(many); i++) {
+                 String names = in.readLine();
+                 if (names.charAt(0) == '<' && names.charAt(2) == '>') {// 처음 들어왔을 때
+                    System.out.println("hihi");
+                    if (names.substring(0, 3).equals("<A>")) {
+                       namelist_A[i - bcount] = names;
+                       acount++;
+                    } else if (names.substring(0, 3).equals("<B>")) {
+                       namelist_B[i - acount] = names;
+                       bcount++;
+                    }
 
-	}
+                    System.out.println("hihi");
+                 }
+              }
+            
+              String astring = "", bstring = "";
+              namelist_a.setText("<html>" + namelist_a.getText() + "<br>" + namelist_A[0] + "<br>" + namelist_A[1]
+                    + "<br>" + namelist_A[2] + "</html>");
 
-	/**
-	 * 
-	 * 
-	 * 
-	 * Connects to the server then enters the processing loop.
-	 * 
-	 * 
-	 * 
-	 * @return
-	 * 
-	 * 
-	 * 
-	 * @throws IOException
-	 * 
-	 * 
-	 * 
-	 * @throws ClassNotFoundException
-	 * 
-	 * 
-	 * 
-	 * @throws InterruptedException
-	 * 
-	 * 
-	 * 
-	 * @throws UnknownHostException
-	 * 
-	 * 
-	 * 
-	 */
+              namelist_b.setText("<html>" + namelist_b.getText() + "<br>" + namelist_B[0] + "<br>" + namelist_B[1]
+                    + "<br>" + namelist_B[2] + "</html>");
 
-	public void run() throws IOException, ClassNotFoundException, InterruptedException {
+            
+         }
+         
+         
+         
+         else if (line.startsWith("<NAMEACCEPTED>")) {
 
-		String serverAddress = null;
+            textField.setEditable(true);
 
-		while (true)
+         }
 
-		{
+         else if (line.startsWith("<SUBMITTEAM>"))
 
-			if (RelaySketch.check_IP == 1)
+         {
 
-			{
+            while (true)
 
-				serverAddress = RelaySketch.IPADDRESS;
+            {
 
-				break;
+               if (RelaySketch.check_team == 1)
 
-			}
+               {
 
-			System.out.print("");
+                  out.println(RelaySketch.TEAM);
 
-		}
+                  break;
 
-		// Make connection and initialize streams
+               }
 
-		Socket socket = new Socket(serverAddress, 5880);
+               System.out.print("");
 
-		in = new BufferedReader(new InputStreamReader(
+            }
 
-				socket.getInputStream()));
+         }
 
-		out = new PrintWriter(socket.getOutputStream(), true);
+         else if (line.startsWith("<GAMEFRAME>")) {
 
-		// Process all messages from server, according to the protocol.
+              Image showImages = new ImageIcon("C:\\2-2\\client_get.png").getImage();//소영
+               Image scaledImage =showImages.getScaledInstance(500,300,Image.SCALE_DEFAULT);//소영
+               ImagePanel showImage=new ImagePanel(new ImageIcon(scaledImage).getImage());//소영
+               //showImage.setSize(400,500);//소영
+               showImage.setBounds(12, 360, 638, 294);//소영
+               welcomePanel.add(showImage);//소영
+               showImage.setVisible(true);
+               
+           
+            frame.setVisible(true);
 
-		while (true)
+         }
 
-		{
+         else if (line.startsWith("MESSAGE")) {
 
-			UserRepaint b = null;
+            messageArea.append(line.substring(8) + "\n");
 
-			String line = in.readLine();
+         }
 
-			if (line.startsWith("<SUBMITNAME>")) {
-				while (true) {
-					if (RelaySketch.check_name == 1)
+         else if (line.startsWith("<SEND>"))
 
-					{
+         {
+            if(SEQNUM!=1) {
+            Image showImages = new ImageIcon("C:\\2-2\\client_get.png").getImage();//소영
+           Image scaledImage =showImages.getScaledInstance(500,300,Image.SCALE_DEFAULT);//소영
+           ImagePanel showImage=new ImagePanel(new ImageIcon(scaledImage).getImage());//소영
+           //showImage.setSize(400,500);//소영
+           showImage.setBounds(12, 360, 638, 294);//소영
+           welcomePanel.add(showImage);//소영
+           showImage.updateUI();    
+           showImage.setVisible(true);
+            }
+            b = new UserRepaint();
 
-						out.println(RelaySketch.NAME);
-						break;
+         }
 
-					} // if(check==name 끝
+         else if(line.startsWith("<START>"))
+         {  
 
-					System.out.print("");
 
-				} // while 끝
 
-			} else if (line.startsWith("<TEAMVIEW>")) {
-				namelist_a.setText("A team");
-				namelist_b.setText("B team");
-				String many = in.readLine();
-				int acount = 0, bcount = 0;
-				String[] namelist_A = { "", "", "" };
-				String[] namelist_B = { "", "", "" };
-				System.out.println(line);
-				for (int i = 0; i < Integer.parseInt(many); i++) {
-					String names = in.readLine();
-					if (names.charAt(0) == '<' && names.charAt(2) == '>') {// 처음 들어왔을 때
-						System.out.println("hihi");
-						if (names.substring(0, 3).equals("<A>")) {
-							namelist_A[i - bcount] = names;
-							acount++;
-						} else if (names.substring(0, 3).equals("<B>")) {
-							namelist_B[i - acount] = names;
-							bcount++;
-						}
+            while(check==0) {
 
-						System.out.println("hihi");
-					}
-				}
-				/*
-				 * else if(line.matches(".*퇴장.*")) {//퇴장했을 때 int index=line.indexOf("님"); String
-				 * name=line.substring(14,index);
-				 * 
-				 * if(line.matches(".*<A>.*")) { for(int i=0;i<namelist_A.size();i++) {
-				 * if((namelist_A.get(i)).matches(name)) { namelist_A.remove(i); } } //들어온 이름이랑
-				 * list A에 있는 이름이랑 비교해서 같으면 //A에서 remove } else if(line.matches(".*<B>.*")) {
-				 * for(int i=0;i<namelist_B.size();i++) { if((namelist_B.get(i)).matches(name))
-				 * { namelist_B.remove(i); } }
-				 * 
-				 * //들어온 이름이랑 list B에 있는 이름이랑 비교해서 같으면 //B에서 remove } }
-				 */
-				String astring = "", bstring = "";
-				namelist_a.setText("<html>" + namelist_a.getText() + "<br>" + namelist_A[0] + "<br>" + namelist_A[1]
-						+ "<br>" + namelist_A[2] + "</html>");
+           System.out.print("");
+           if(seqnum.equals("1")&&PASSPRESSED==1) {
+           String queue=in.readLine();
+           out.println("nothing");// prevent waiting input from server
+           System.out.println(":"+queue);
+           if(queue.startsWith("<GIVEWORD>")) // if pass button pushed
 
-				namelist_b.setText("<html>" + namelist_b.getText() + "<br>" + namelist_B[0] + "<br>" + namelist_B[1]
-						+ "<br>" + namelist_B[2] + "</html>");
+           {
 
-			} else if (line.startsWith("<NAMEACCEPTED>")) {
+              String word;
 
-				textField.setEditable(true);
+              word=in.readLine();
+             System.out.println("word : "+word);
+              label_word.setText(word);
 
-			}
+              label_word.setVisible(true); //change the word in the given category
 
-			else if (line.startsWith("<SUBMITTEAM>"))
+           }//진겸
+           }
+          
 
-			{
+             if(check==1) {
 
-				while (true)
+                
+                System.out.println("in "+check);
 
-				{
+                 out.println("<send>");
+              
+                 PASSPRESSED=0;
 
-					if (RelaySketch.check_team == 1)
+                 System.out.print("");
 
-					{
 
-						out.println(RelaySketch.TEAM);
 
-						break;
+                
 
-					}
 
-					System.out.print("");
 
-				}
+                 break;    
 
-			}
 
-			else if (line.startsWith("<GAMEFRAME>")) {
 
-				frame.setVisible(true);
+                 }
 
-			}
 
-			else if (line.startsWith("MESSAGE")) {
 
-				messageArea.append(line.substring(8) + "\n");
+             else
 
-			}
 
-			else if (line.startsWith("<SEND>"))
 
-			{
+                continue;
 
-				// frame_drawing.setVisible(true);//소영
 
-				Image showImages = new ImageIcon("C:\\2-2\\client_get.png").getImage();// 소영
 
-				Image scaledImage = showImages.getScaledInstance(400, 500, Image.SCALE_DEFAULT);// 소영
-				ImagePanel showImage = new ImagePanel(new ImageIcon(scaledImage).getImage());// 소영
+             }
 
-				// showImage.setSize(400,500);//소영
-				showImage.setBounds(12, 218, 444, 372);// 소영
 
-				welcomePanel.add(showImage);// 소영
 
-				// frame.add(panel_drawing,"WEST");//소영
+               check=0;
 
-				b = new UserRepaint();
 
-			}
 
-			else if (line.startsWith("<START>"))
+         }
 
-			{
+         else if (line.startsWith("<CANVAS>"))
 
-				while (check == 0) {
+         {
 
-					System.out.print("");
+            Socket soc = new Socket(serverAddress, 11111);
 
-					if (check == 1) {
+            System.out.println(":start!");
 
-						System.out.println("in " + check);
+            out2 = soc.getOutputStream();
 
-						out.println("<send>");
+            DataOutputStream dout = new DataOutputStream(out2);
 
-						System.out.print("");
+            fin = new FileInputStream(new File("C:\\2-2\\client_paint.png"));
 
-						break;
+            byte[] buffer = new byte[5000];
 
-					}
+            int len;
 
-					else
+            int data = 0;
 
-						continue;
+            int datas;
 
-				}
+            while ((len = fin.read(buffer)) > 0)
 
-				check = 0;
+            {
 
-			}
+               data++;
 
-			else if (line.startsWith("<CANVAS>"))
+            }
 
-			{
+            dout.writeInt(data);
 
-				Socket soc = new Socket(serverAddress, 11111);
+            datas = data;
 
-				System.out.println(":start!");
+            System.out.println(data);
 
-				out2 = soc.getOutputStream();
+            fin.close();
 
-				DataOutputStream dout = new DataOutputStream(out2);
+            fin = new FileInputStream("C:\\2-2\\client_paint.png");
 
-				fin = new FileInputStream(new File("C:\\\\2-2\\\\client_paint.png"));
+            len = 0;
 
-				byte[] buffer = new byte[5000];
+            int i = 0;
 
-				int len;
+            for (; data > 0; data--)
 
-				int data = 0;
+            {
 
-				int datas;
+               len = fin.read(buffer);
 
-				while ((len = fin.read(buffer)) > 0)
+               out2.write(buffer, 0, len);
 
-				{
+               out.println(len);
 
-					data++;
+            }
 
-				}
+         }
+         else if (line.startsWith("<BCANVAS>"))
 
-				dout.writeInt(data);
+         {
 
-				datas = data;
+            Socket soc = new Socket(serverAddress, 33333);
 
-				System.out.println(data);
+            System.out.println(":start!");
 
-				fin.close();
+            out2 = soc.getOutputStream();
 
-				fin = new FileInputStream("C:\\2-2\\client_paint.png");
+            DataOutputStream dout = new DataOutputStream(out2);
 
-				len = 0;
+            fin = new FileInputStream(new File("C:\\2-2\\client_paint.png"));
 
-				int i = 0;
+            byte[] buffer = new byte[5000];
 
-				for (; data > 0; data--)
+            int len;
 
-				{
+            int data = 0;
 
-					len = fin.read(buffer);
+            int datas;
 
-					out2.write(buffer, 0, len);
+            while ((len = fin.read(buffer)) > 0)
 
-					out.println(len);
+            {
 
-				}
+               data++;
 
-			}
+            }
 
-			else if (line.startsWith("<RECEIVE>"))
+            dout.writeInt(data);
 
-			{
+            datas = data;
 
-				int count = 0;
+            System.out.println(data);
 
-				Socket soc2 = new Socket(serverAddress, 22222);
+            fin.close();
 
-				System.out.println(":start!");
+            fin = new FileInputStream("C:\\2-2\\client_paint.png");
 
-				in2 = soc2.getInputStream();
+            len = 0;
 
-				DataInputStream dout1 = new DataInputStream(in2);
+            int i = 0;
 
-				int len;
+            for (; data > 0; data--)
 
-				int data = 0;
+            {
 
-				data = dout1.readInt();
+               len = fin.read(buffer);
 
-				fin2 = new FileOutputStream(new File("C:\\2-2\\client_get.png"));
+               out2.write(buffer, 0, len);
 
-				DataOutputStream din = new DataOutputStream(soc2.getOutputStream());
+               out.println(len);
 
-				byte[] buffer2 = new byte[5000];
+            }
 
-				System.out.println(data);
+         }
 
-				System.out.println("heyyo!");
+         else if (line.startsWith("<RECEIVE>"))
 
-				int temp = data;
+         {
 
-				len = 0;
+            int count = 0;
 
-				for (; data > 0; data--)
+            Socket soc2 = new Socket(serverAddress, 22222);
 
-				{
+            System.out.println(":start!");
 
-					len = in2.read(buffer2);
+            in2 = soc2.getInputStream();
 
-					fin2.write(buffer2, 0, len);
+            DataInputStream dout1 = new DataInputStream(in2);
 
-					String queue = in.readLine();
+            int len;
 
-					System.out.println("receive : " + len);
+            int data = 0;
 
-					System.out.println("!");
+            data = dout1.readInt();
 
-					System.out.println(queue);
+            fin2 = new FileOutputStream(new File("C:\\2-2\\client_get.png"));
 
-					if (Integer.toString(len).equals(queue))
+            DataOutputStream din = new DataOutputStream(soc2.getOutputStream());
 
-					{
+            byte[] buffer2 = new byte[5000];
 
-						count++;
+            System.out.println(data);
 
-					}
+            System.out.println("heyyo!");
 
-				}
+            int temp = data;
 
-				System.out.println(count);
+            len = 0;
 
-				if (count == temp)
+            for (; data > 0; data--)
 
-				{
+            {
 
-					System.out.println(count);
+               len = in2.read(buffer2);
 
-					din.writeInt(1);
+               fin2.write(buffer2, 0, len);
 
-					System.out.println("wow");
+               String queue = in.readLine();
 
-				}
+               System.out.println("receive : " + len);
 
-				else
+               System.out.println("!");
 
-				{
+               System.out.println(queue);
 
-					din.writeInt(2);
+               if (Integer.toString(len).equals(queue))
 
-				}
+               {
 
-			}
+                  count++;
 
-			else if (line.startsWith("<OUT>"))
+               }
 
-			{
+            }
 
-				System.out.println("out");
+            System.out.println(count);
 
-				out2.close();
+            if (count == temp)
 
-				System.out.println("out");
+            {
 
-			}
+               System.out.println(count);
 
-			else if (line.startsWith("<ALLIN>"))
+               din.writeInt(1);
 
-			{
+               
+            }
 
-				System.out.println("6 people in");
+            else
 
-				TimerThread th = new TimerThread(timerLabel);
+            {
 
-				label.setText("3");
+               din.writeInt(2);
 
-				Thread.sleep(1000);
+            }
 
-				label.setText("2");
+         }
+         else if (line.startsWith("<BRECEIVE>"))
 
-				Thread.sleep(1000);
+         {
 
-				label.setText("1");
+            int count = 0;
 
-				Thread.sleep(1000);
+            Socket soc3 = new Socket(serverAddress, 44444);
 
-				label.setText("START");
+            System.out.println(":start!");
 
-				Thread.sleep(1000);
+            in2 = soc3.getInputStream();
 
-				th.start();
+            DataInputStream dout1 = new DataInputStream(in2);
 
-				label_score_a.setVisible(true);
+            int len;
 
-			}
+            int data = 0;
 
-			else if (line.startsWith("<GIVEWORD>")) {
+            data = dout1.readInt();
 
-				String word;
+            fin2 = new FileOutputStream(new File("C:\\2-2\\client_get.png"));
 
-				word = in.readLine();
+            DataOutputStream din = new DataOutputStream(soc3.getOutputStream());
 
-				label_word.setText(word);
+            byte[] buffer2 = new byte[5000];
 
-				label_word.setVisible(true);
+            System.out.println(data);
 
-			} // 진겸
-			else if (line.startsWith("<GIVECATEGORY>"))
+            System.out.println("heyyo!");
 
-			{
+            int temp = data;
 
-				String givencategory;
+            len = 0;
 
-				givencategory = in.readLine();
+            for (; data > 0; data--)
 
-				label_category.setText(givencategory);
+            {
 
-			} // 서버에서 단어받아오기,//진겸
+               len = in2.read(buffer2);
 
-			else if (line.startsWith("<SCORE>")) {
+               fin2.write(buffer2, 0, len);
 
-				String score;
+               String queue = in.readLine();
 
-				score = in.readLine();
+               System.out.println("receive : " + len);
 
-				label_score_a.setText(score);
+               System.out.println("!");
 
-			}
+               System.out.println(queue);
 
-			else if (line.startsWith("<AANSWERSHEET>"))
+               if (Integer.toString(len).equals(queue))
 
-			{
+               {
 
-				System.out.println("END");
+                  count++;
 
-				String q = getanswer();
+               }
 
-				System.out.println(q);
+            }
 
-				out.println("<Aanswer>" + q);
+            System.out.println(count);
 
-				System.out.println("OUT");
+            if (count == temp)
 
-				String result;
+            {
 
-				result = in.readLine();
+               System.out.println(count);
 
-				if (result.startsWith("<ANSWERCORRECT>"))
+               din.writeInt(1);
 
-				{
+               
+               
+            }
 
-					correct_answer();
-				}
+            else
 
-				else if (result.startsWith("<ANSWERWRONG>"))
+            {
 
-				{
-					wrong_answer(result.substring(13));
+               din.writeInt(2);
 
-				}
+            }
 
-			} // 진겸
+         }
+         else if (line.startsWith("<OUT>"))
 
-			else if (line.startsWith("<BANSWERSHEET>"))
+         {
 
-			{
+            System.out.println("out");
 
-				System.out.println("END");
+            out2.close();
 
-				String q = getanswer();
+            System.out.println("out");
 
-				System.out.println(q);
+         }
 
-				out.println("<Banswer>" + q);
+         else if (line.startsWith("<ALLIN>"))
 
-				System.out.println("OUT");
+         {
 
-				String result;
+            System.out.println("6 people in");
 
-				result = in.readLine();
+            TimerThread th = new TimerThread(timerLabel);
 
-				if (result.startsWith("<ANSWERCORRECT>"))
+            label.setText("3");
 
-				{
+            Thread.sleep(1000);
 
-					correct_answer();
+            label.setText("2");
 
-				}
+            Thread.sleep(1000);
 
-				else if (result.startsWith("<ANSWERWRONG>"))
+            label.setText("1");
 
-				{
+            Thread.sleep(1000);
 
-					wrong_answer(result.substring(13));
+            label.setText("START");
 
-				}
+            Thread.sleep(1000);
 
-			} // 진겸
+            th.start();
 
-			else if (line.startsWith("<SEQUENCE>"))
+            label_score.setVisible(true);
 
-			{
+         }
 
-				String seqnum = line.substring(10);
+         else if (line.startsWith("<GIVEWORD>")) {
 
-				System.out.println(seqnum);
+            String word;
 
-				label.setText(seqnum);
+            word = in.readLine();
 
-			}
+            label_word.setText(word);
 
-		}
+            label_word.setVisible(true);
 
-		// 여기다가 점수들 띄워주는 창 올려봐
+         } // 진겸
+         else if (line.startsWith("<GIVECATEGORY>"))
 
-	}
+         {
 
-	/**
-	 * 
-	 * 
-	 * 
-	 * Runs the client as an application with a closeable frame.
-	 * 
-	 * 
-	 * 
-	 */
+            String givencategory;
 
-	public static void main(String[] args) throws Exception {
+            givencategory = in.readLine();
 
-		Client client = new Client();
+            label_category.setText(givencategory);
 
-		client.run();
+         } // 서버에서 단어받아오기,//진겸
 
-	}
+         else if (line.startsWith("<SCORE>")) {
+
+            String score;
+
+            score = in.readLine();
+
+            label_score.setText(score);
+
+         }
+
+         else if (line.startsWith("<AANSWERSHEET>"))
+
+         {
+
+            Image showImages = new ImageIcon("C:\\2-2\\client_get.png").getImage();//소영
+             Image scaledImage =showImages.getScaledInstance(500,300,Image.SCALE_DEFAULT);//소영
+             ImagePanel showImage=new ImagePanel(new ImageIcon(scaledImage).getImage());//소영
+             //showImage.setSize(400,500);//소영
+             showImage.setBounds(12, 360, 638, 294);//소영
+             welcomePanel.add(showImage);//소영
+             showImage.updateUI();    
+             showImage.setVisible(true);
+            System.out.println("END");
+
+            String q = get_answer();
+
+            System.out.println(q);
+
+            out.println("<Aanswer>" + q);
+
+            System.out.println("OUT");
+
+            String result;
+
+            result = in.readLine();
+
+            if (result.startsWith("<ANSWERCORRECT>"))
+
+            {
+
+               correct_answer();
+            }
+
+            else if (result.startsWith("<ANSWERWRONG>"))
+
+            {
+               wrong_answer(result.substring(13));
+
+            }
+
+         } // 진겸
+
+         else if (line.startsWith("<BANSWERSHEET>"))
+
+         {
+            Image showImages = new ImageIcon("C:\\2-2\\client_get.png").getImage();//소영
+             Image scaledImage =showImages.getScaledInstance(500,300,Image.SCALE_DEFAULT);//소영
+             ImagePanel showImage=new ImagePanel(new ImageIcon(scaledImage).getImage());//소영
+             //showImage.setSize(400,500);//소영
+             showImage.setBounds(12, 360, 638, 294);//소영
+             welcomePanel.add(showImage);//소영
+             showImage.updateUI();    
+             showImage.setVisible(true);
+            System.out.println("END");
+
+            String q = get_answer();
+
+            System.out.println(q);
+
+            out.println("<Banswer>" + q);
+
+            System.out.println("OUT");
+
+            String result;
+
+            result = in.readLine();
+
+            if (result.startsWith("<ANSWERCORRECT>"))
+
+            {
+
+               correct_answer();
+
+            }
+
+            else if (result.startsWith("<ANSWERWRONG>"))
+
+            {
+
+               wrong_answer(result.substring(13));
+
+            }
+            
+            
+             
+              
+
+         } // 진겸
+
+         else if (line.startsWith("<SEQUENCE>"))
+
+         {
+
+            seqnum = line.substring(10);
+            SEQNUM=Integer.parseInt(seqnum);
+            System.out.println(seqnum);
+
+            label.setText(seqnum);
+
+         }
+
+      }
+
+      // 여기다가 점수들 띄워주는 창 올려봐
+
+   }
+
+   /**
+    * 
+    * 
+    * 
+    * Runs the client as an application with a closeable frame.
+    * 
+    * 
+    * 
+    */
+
+   public static void main(String[] args) throws Exception {
+
+      Client client = new Client();
+
+      client.run();
+
+   }
 
 }
 
 class TimerThread extends Thread {
+  
 
-	private JLabel timerLabel;// 타이머 값이 출력될 레이블
 
-	public TimerThread(JLabel timerLabel) {
+   private JLabel timerLabel;// 타이머 값이 출력될 레이블
 
-		this.timerLabel = timerLabel; // 타이머 카운트를 출력할 레이블
+   public TimerThread(JLabel timerLabel) {
 
-	}
+      this.timerLabel = timerLabel; // 타이머 카운트를 출력할 레이블
 
-	// 스레드 코드 run()이 종료하면 스레드 종료
+   }
 
-	public void run() {
+   // 스레드 코드 run()이 종료하면 스레드 종료
 
-		int n = 100;
+   public void run() {
 
-		while (n >= 0) {
+      int n = 100;
 
-			timerLabel.setText(Integer.toString(n));
+      while (n >= 0) 
+      {
 
-			if (n == 0)
+         timerLabel.setText(Integer.toString(n));
+               
+         if (n == 0)
 
-			{
+         {
+            System.out.println("hello");
+            UserRepaint.isend = 1;
+            Client.show_result();
+            break;
+         }
 
-				System.out.println("hello");
+         else
 
-				UserRepaint.isend = 1;
+            n--;
 
-				break;
+         try {
 
-			}
+            Thread.sleep(1000);// 1초간격
 
-			else
+         } catch (InterruptedException e) {
 
-				n--;
+            e.printStackTrace();
 
-			try {
+         }
 
-				Thread.sleep(1000);// 1초간격
+      }
+      
+      
 
-			} catch (InterruptedException e) {
+   }
 
-				e.printStackTrace();
-
-			}
-
-		}
-
-	}
+   
 
 }
