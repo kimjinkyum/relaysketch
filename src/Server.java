@@ -50,7 +50,7 @@ import javax.swing.JLabel;
  * <AANSWERSHEET>/BAANSWERSHEET> give to client when last client have to answer - answer.
  */
 public class Server {
-
+	  private static int restart=0; 
    private static int asequence = 0, bsequence = 0;// sequence for each team.
    private static int acount = 0, bcount = 0;// specify user(by sequence)
    private static String[] names1 = new String[30];// name for user - using name list
@@ -58,9 +58,8 @@ public class Server {
    private static final int PORT = 5880;// The relay sketch server port number- connect client
    private static int ateamout = 0, bteamout = 0;// number of exit user.
    private static int a = 0, b = 0;// ???
-  static int APASScheck=0,BPASScheck=0;
-   private static int restart=0; 
-  /*
+   
+   /*
     * The string is the key(users)of clients in the chat room so that we can check
     * that new clients are not registering name already in use. Then mapping
     * users(users+team) and printwriter. users format=<A>name / <B>name
@@ -162,16 +161,17 @@ public class Server {
                if (name == null) {
                   return;
                } // if(name ==null) 문 종료
-               if (team_a.containsKey(name) || team_b.containsKey(name)) {
-                  	 RelaySketch.dupname=1;
-                      System.out.println("CHANGED : "+RelaySketch.dupname);      
-               }
-               
+
                /* check name is unique */
-               synchronized (users) {
+               synchronized (users) 
+               {
 
                   /* if name is unique, then choose team.(A,B) */
-                  if (!team_a.containsKey(name) && !team_b.containsKey(name)) {
+                  if ((!team_a.containsKey(name)) && (!team_b.containsKey(name))) 
+                  {
+                     System.out.println("잇어ㅅ없어");
+                	  out.println("<NAMEACCEPTED>");// - name is accepted(unique)
+
                      String temp = null;
 
                      out.println("<SUBMITTEAM>");// server message: team choice
@@ -209,13 +209,14 @@ public class Server {
                            name = "<A> " + name;
                            a++;
                            out.println("<AFULL>");
+                           
                         } else {
                            team_b.put(name, out);
 
                            name = "<B> " + name;
                            b++;
-
                            out.println("<BFULL>");
+                           
                         }
 
                      } // if(team==b )종료
@@ -235,37 +236,42 @@ public class Server {
                       * order to all users. : give word to first user and provide painting panel. and
                       * until end of the game chat is prohibited to prevent the outflow of answers.
                       **/
-                     if (users.size()== 3/*&&a==3&&b==3*/) {
+                     users.put(name, out);
+                     names1[user_howmuch] = name;
+                     user_howmuch++;
+                     for (PrintWriter writer : users.values()) {
+                         writer.println("<TEAMVIEW>");
+                         writer.println(users.size());
+                         for (int i = 0; i < user_howmuch; i++) {
+                            writer.println(names1[i]);
+                         }
+                      }
+                     if (users.size()== 6&&a==3&&b==3) {
                         for (PrintWriter writer : users.values()) {
                            writer.println("<ALLIN>");
                         } // for
                         give_category("A");// send category to users of a team
-                        give_category("B");// send category to users of b team0
+                        give_category("B");// send category to users of b team
                      } // if(all in one)
+                   
+
                      break;
-                  } // if문 (이름 확인)
-                  
-                  
+                   // if문 (이름 확인)
+                  }
+                 
+                	             	 
                   
                } // 싱크로
 
             } // while문
 
-            out.println("<NAMEACCEPTED>");// - name is accepted(unique)
 
             // To every user send the information of other users.(team+name)
-            names1[user_howmuch] = name;
-            user_howmuch++;
-
-            users.put(name, out);
-
-            for (PrintWriter writer : users.values()) {
-               writer.println("<TEAMVIEW>");
-               writer.println(users.size());
-               for (int i = 0; i < user_howmuch; i++) {
-                  writer.println(names1[i]);
-               }
-            }
+      
+          
+          
+          
+            
 
             /**
              * Accept messages from this client and broadcast same team member But game is
@@ -276,7 +282,7 @@ public class Server {
             while (true) {
                String input = "";
                int incount_a = 0, incount_b = 0;
-               if(restart==3)
+               if(restart==6)
                {    
             	    gamea=1;
                    
@@ -287,7 +293,7 @@ public class Server {
             	   {  
             		   System.out.println("얼마나가냐?");
             		   writer.println("<ALLIN>");
-            		   String checkto;
+            		  
             		   Client.canvascheck=1;
               		   give_category("A");// send category to users of a team
                        give_category("B");// send category to users of b team
@@ -300,11 +306,10 @@ public class Server {
                 * 
                 */
                if (gamea == 1) {
-            	   System.out.println("왜?");
                   for (PrintWriter writer : team_a.values()) {
                      if (gamea == 1) /* send next word to first user. */
                      {
-                    	 System.out.println("들어오잖아 왜?");
+
                         writer.println("<GIVEWORD>");
                         writer.println(choice_word[indexword_a]);
                         indexword_a++;
@@ -348,7 +353,6 @@ public class Server {
                     
                   System.out.println(input.substring(9).equals("YES")+"pojpi+restart : "+restart);
                }
-               
                /**
                 *  if last user answer, then client send Aanswer message to server. 
                 * then check the answer is correct the word.  update score.
@@ -424,10 +428,7 @@ public class Server {
                                * */
                               
                               if (acount == incount_a) {
-                            	  if(acount==0)
-                            	  {
-                            		  APASScheck=1;
-                            	  }
+                            	 
                                  while (check==0) {
                                     chattingcheck = 1;
                                     ServerSocket soc2 = new ServerSocket(11111);
@@ -582,10 +583,7 @@ public class Server {
 
                      for (PrintWriter writer : team_b.values()) {
                         if (bcount == incount_b) {
-                        	if(bcount==0)
-                      	  {
-                      		  BPASScheck=1;
-                      	  }
+                        	
                            while (check3 == 0) {
                               ServerSocket soc3 = new ServerSocket(33333);
 
@@ -699,50 +697,14 @@ public class Server {
                  
                  
                  
-                 if(input.equals("<PASS>")) //when the pass button is pressed
-                 {
-                   
-                    if (name.startsWith("<A> ")) {
-                     for (PrintWriter writer : team_a.values()) 
-                      {                       
-                          writer.println("<GIVEWORD>");//진겸
-                          writer.println(choice_word[indexword_a]);//진겸
-                          indexword_a++;//진겸
-                          break;    
-                      }//send the next word to first person.
-                     }
-                    else if(name.startsWith("<B> "))
-                          {
-                        for (PrintWriter writer : team_b.values()) 
-                         {                       
-                               writer.println("<GIVEWORD>");//진겸
-                               writer.println(choice_word[indexword_b]);//진겸
-                               indexword_b++;//진겸
-                               break;  
-                          }
-                 }
-               }
-                 
+               
+
                 if (input == null) {
 
                   return;
                }
 
-               if(APASScheck==0) {
-                   for (PrintWriter writer : team_a.values()) 
-                   {                       
-                       writer.println("nothing");//진겸
-                       break;    
-                   }
-
-                  }
-                   if(BPASScheck==0) {
-                   for (PrintWriter writer : team_b.values()) 
-                   {                       
-                     writer.println("nothing");
-                     break;
-                     }
-                  }
+               
                /*broadcast message to same team user. if the chat is accepted
                 * the game start chattingcheck set 1.
                 * */
@@ -777,39 +739,57 @@ public class Server {
          } finally {
             // This client is going down! Remove its name and its print
 
+        	 System.out.println(name);
+        	 System.out.println(name.substring(4));
             // writer from the sets, and close its socket.
-            if (name != null) {
+            if (name != null) 
+            {
                users.remove(name);
+              
                if (name.startsWith("<A> ")) {
-                  team_a.remove(name);
-                  ateamout--;
+            	   
+            	   System.out.println("나가");
+            	   team_a.remove(name.substring(4));
+            	   ateamout--;
                   a--;
+                  
                } // if(이름 A팀)
                if (name.startsWith("<B> ")) {
-                  team_b.remove(name);
+                  team_b.remove(name.substring(4));
                   bteamout--;
                   b--;
                } // if(이름 B팀)
             } // if(name!=null)
             if (out != null) {
                users.remove(out);
-               for (int i = 0; i < user_howmuch; i++) {
-                   if(names1[i].equals(name))
-                   {
-                  	 for(int j=i; j<user_howmuch-1; j++)
-                  	 {
-                  		 names1[j]=names1[j+1];
-                  	 }
-                  	 break;
-                   }  
-             }
-                user_howmuch--;
+               System.out.println("나가");
+               
                /* The exit user info(name) broadcast all user. */
                for (PrintWriter writer : users.values()) {
                   writer.println("MESSAGE " + "***" + name + "님이 퇴장하셨습니다. ***");
-                          
-               }// for(Printwriter-퇴장소식)
-               
+                  writer.println("<USEROUT>");
+                    writer.println(users.size());
+                    
+                      for (int i = 0; i < user_howmuch; i++) {
+                         if(names1[i].equals(name))
+                         {
+                        	 for(int j=i; j<user_howmuch-1; j++)
+                        	 {
+                        		 names1[j]=names1[j+1];
+                        	 }
+                        	 if(i==0)
+                        	 {
+                        		 names1[i]=null;
+                        	 }
+                         }
+                    	  
+                   }
+                       for (int i = 0; i < user_howmuch; i++) {
+                        writer.println(names1[i]);
+                      }
+                     
+                      user_howmuch--;
+               } // for(Printwriter-퇴장소식)
             } // if(out!=null)
 
             try {
@@ -818,13 +798,6 @@ public class Server {
             } catch (IOException e) {
 
             } // catch
-            for (PrintWriter writer : users.values()) {
-                writer.println("<TEAMVIEW>");
-                writer.println(users.size());
-                for (int i = 0; i < user_howmuch; i++) {
-                   writer.println(names1[i]);
-                }
-             }
          } // finally
       }// run 메소드
    // handler class
