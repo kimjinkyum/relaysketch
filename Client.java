@@ -140,7 +140,7 @@ import javax.swing.plaf.synth.SynthSeparatorUI;
 
 public class Client 
 {
-      public static int endcheck=0;//∆–≈∞¡ˆ ∫Øºˆ(¿Ã∏ß)
+      public static int endcheck=0;//Ìå®ÌÇ§ÏßÄ Î≥ÄÏàò(Ïù¥Î¶Ñ)
       public static int gamestart=0;
       public static int uniqueName=0;
 
@@ -149,7 +149,7 @@ public class Client
    static PrintWriter out;
    OutputStream out2;
    InputStream in2;
-   
+   public static int canvascheck=0;
    /*file transfer.*/
    FileInputStream fin;
    FileOutputStream fin2;
@@ -159,20 +159,20 @@ public class Client
    JPanel panel = new JPanel();
    JPanel backgrounda = new JPanel();
    JPanel backgroundb = new JPanel();
-   static public ImagePanel welcomePanel = new ImagePanel(new ImageIcon("C:\\2-2\\black.jpg").getImage());//game panel 
+   static public ImagePanel welcomePanel = new ImagePanel(new ImageIcon("C:\\2-2\\gameframe.jpg").getImage());//game panel 
    static public JPanel resultPanel=new JPanel();//result panel.
    static public JPanel outPanel=new JPanel();
 
    static JFrame resultframe=new JFrame();
    static JFrame outframe=new JFrame();
 
-   JTextField textField = new JTextField(40);// send to message
-   JTextArea messageArea = new JTextArea(30, 40);// chatting room
+   JTextField textField = new JTextField(45);// send to message
+   JTextArea messageArea = new JTextArea(21,45);// chatting room
    
    /*specify for user.*/
    JLabel namelist_a = new JLabel("A team");
    JLabel namelist_b = new JLabel("B team");
-   
+   static public int timeover=0;
    JLabel label = new JLabel("WAIT");// label for starter.
    JLabel timerLabel = new JLabel("TIMER");//label for timer
    JLabel label_word = new JLabel("Word");// label for word.(only to first user)
@@ -185,10 +185,18 @@ public class Client
    static String seqnum; // game sequence.  
    public static int check = 0;//??
    
+   static int aful=0;
+   static int bful=0;
+    
+    
+   
    static int timercheck = 0;// check if time is over.
    int SEQNUM=0;//??
    
-   
+   Image showImages2 = new ImageIcon("C:\\2-2\\first.png").getImage();//ÏÜåÏòÅ
+   Image scaledImage2 =showImages2.getScaledInstance(700,470,Image.SCALE_DEFAULT);//ÏÜåÏòÅ
+   ImagePanel showImage2=new ImagePanel(new ImageIcon(scaledImage2).getImage());//ÏÜåÏòÅ
+
    RelaySketch relay = new RelaySketch();
 
    /**
@@ -223,9 +231,11 @@ public class Client
    
    
    public static void show_OutEnd() {
-      outframe.setSize(700, 200);
+      
+     outframe.setSize(400, 160);
+     outframe.setLocationRelativeTo(null);
       outPanel.setBackground(Color.BLACK);
-      JLabel outlabel= new JLabel("end~ because person goes out");
+      JLabel outlabel= new JLabel("THE GAME IS END.");
       outlabel.setBackground(Color.ORANGE);
 
       outlabel.setForeground(new Color(255, 0, 0));
@@ -251,12 +261,40 @@ public class Client
    { 
      
       resultframe.setSize(500, 300);
+      resultframe.setLocationRelativeTo(null);
       resultPanel.setBackground(Color.WHITE);
       String result_end=label_score.getText();   
       JLabel result_score= new JLabel();
+      
+      JButton yes=new JButton("YES");
+      yes.setFont(new Font("Arial Black", Font.PLAIN, 22));
+  
+   yes.addActionListener(new ActionListener() 
+  {
+      public void actionPerformed(ActionEvent arg0) 
+      {
+         out.println("<RESTART>YES");
+         resultframe.dispose();
+       }
+    
+   });
+  
+  JButton no=new JButton("NO");
+  no.setFont(new Font("Arial Black", Font.PLAIN, 22));
+  no.addActionListener(new ActionListener() 
+  {
+      public void actionPerformed(ActionEvent arg0) 
+      {
+         out.println("<RESTART>NO");
+         resultframe.dispose();
+         
+       }
+   });
+      
+      
       result_score.setSize(130, 88);
       result_score.setLocation(165, 44);
-      result_score.setFont(new Font("Arial Rounded MT Bold", Font.BOLD, 50));
+      result_score.setFont(new Font("Calibri", Font.BOLD, 50));
       
       int score_first= Integer.parseInt(result_end.substring(0,result_end.indexOf(":")));
       int score_second= Integer.parseInt(result_end.substring(result_end.indexOf(":")+1));
@@ -280,6 +318,8 @@ public class Client
       }
      resultframe.add(resultPanel);
      resultPanel.add(result_score);
+     resultPanel.add(yes);
+     resultPanel.add(no);
      resultframe.setVisible(true);
    }
    /**correct_answer
@@ -313,7 +353,7 @@ public class Client
 
             frame,
 
-            "Enter your word you think it's answer °ÿno capital :",
+            "Enter your word you think it's answer ‚Äªno capital :",
 
             "ANSWER",
 
@@ -325,85 +365,60 @@ public class Client
     * set GUI for game panel.
     * */
    private void set_GUI() 
+
    {
-       frame.setSize(1280, 720);
-
+          frame.setSize(1280, 720);
          frame.getContentPane().add(welcomePanel, BorderLayout.NORTH);
-
-         panel.setBounds(852, 102, 412, 579);
-         frame.setResizable(false);// ªÁ¿Ã¡Ó ¡∂¡§x
-
+         panel.setBounds(782, 100, 470, 420); //ÏùÄÏÑú
+         frame.setResizable(false);// ÏÇ¨Ïù¥Ï¶à Ï°∞Ï†ïx
          frame.setLocationRelativeTo(null);
-
          textField.setEditable(false);
-
-         panel.add(textField, "North");
-
-         panel.add(messageArea);
-         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);//¿∫º≠
+         panel.add(textField, "North");       
+         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);//ÏùÄÏÑú
+         
          messageArea.setEditable(false);
-         messageArea.setLineWrap(true);//¿∫º≠
-         
-         panel.add(new JScrollPane(messageArea)); //¿∫º≠
-         
-         panel.setBackground(Color.ORANGE);
-
-         panel.setBounds(852, 102, 412, 579);
-
+         messageArea.setLineWrap(true);//ÏùÄÏÑú        
+         panel.add(new JScrollPane(messageArea)); //ÏùÄÏÑú        
+         panel.setBackground(Color.GRAY);     
          welcomePanel.add(panel);
-
          welcomePanel.add(timerLabel, "NORTH");
-
-         timerLabel.setForeground(Color.GRAY);
-
-         timerLabel.setFont(new Font("Arial Rounded MT Bold", Font.BOLD | Font.ITALIC, 54));
-
+         
+         timerLabel.setForeground(Color.black);
+         timerLabel.setFont(new Font("Calibri", Font.BOLD | Font.ITALIC, 54));
          timerLabel.setBounds(554, 10, 462, 82);
-
          label.setForeground(Color.RED);
-
-         label.setFont(new Font("Arial Rounded MT Bold", Font.BOLD | Font.ITALIC, 54));
-
+         label.setFont(new Font("Calibri", Font.BOLD | Font.ITALIC, 54));
          label.setBounds(981, 26, 204, 82);
-
          welcomePanel.add(label);
-
+         
          label_category = new JLabel("Category");
-
-         label_category.setForeground(Color.GRAY);
-
-         label_category.setFont(new Font("Arial Rounded MT Bold", Font.BOLD | Font.ITALIC, 45));
-
+         label_category.setForeground(Color.black);
+         label_category.setFont(new Font("Calibri", Font.BOLD | Font.ITALIC, 45));
          label_category.setBounds(14, 10, 266, 68);
-
-         welcomePanel.add(label_category);// ¡¯∞‚
-
-         label_word.setForeground(Color.GRAY);
-
-         label_word.setFont(new Font("Arial Rounded MT Bold", Font.BOLD | Font.ITALIC, 40));
-
+         welcomePanel.add(label_category);// ÏßÑÍ≤∏
+         
+         label_word.setForeground(Color.black);
+         label_word.setFont(new Font("Calibri", Font.BOLD | Font.ITALIC, 28));
          label_word.setBounds(14, 90, 266, 56);
-
          welcomePanel.add(label_word);
-
+         
          welcomePanel.add(backgrounda);
-         backgrounda.setBackground(Color.WHITE);
-         backgrounda.setBounds(550, 290, 250, 172);
+         backgrounda.setBackground(Color.BLACK);
+         backgrounda.setBounds(782, 545, 230, 120);
          backgrounda.add(namelist_a);
          namelist_a.setFont(new Font("Arial Rounded MT Bold", Font.BOLD, 13));
-
-         welcomePanel.add(backgroundb);
-         backgroundb.setBackground(Color.WHITE);
-         backgroundb.setBounds(550, 490, 250, 172);
+         namelist_a.setForeground(Color.white);      
+         
+         welcomePanel.add(backgroundb);  
+         backgroundb.setBackground(Color.BLACK);
+         backgroundb.setBounds(1020, 545, 230, 120);
          backgroundb.add(namelist_b);
          namelist_b.setFont(new Font("Arial Rounded MT Bold", Font.BOLD, 13));
+         namelist_b.setForeground(Color.white);      
 
-         label_score.setForeground(Color.GRAY);
-
+         label_score.setForeground(Color.BLACK);
          label_score.setFont(new Font("Arial Rounded MT Bold", Font.BOLD | Font.ITALIC, 50));
-
          label_score.setBounds(547, 86, 103, 56);
-
          welcomePanel.add(label_score);
          JButton PassButton = new JButton("PASS");
          PassButton.addActionListener(new ActionListener() {
@@ -411,17 +426,15 @@ public class Client
                out.println("<PASS>");
                PASSPRESSED=1;
             }
+
          });
+
          PassButton.setBounds(364, 102, 105, 27);
-         welcomePanel.add(PassButton);
-         
          label_score.setVisible(false);
+         label_word.setVisible(false);// ÏßÑÍ≤∏
 
-         label_word.setVisible(false);// ¡¯∞‚
-
-
-      
    }
+   
    public Client() {
 
       set_GUI();
@@ -542,11 +555,11 @@ public class Client
                   out.println(RelaySketch.NAME);
                   break;
 
-               } // if(check==name ≥°
+               } // if(check==name ÎÅù
 
                System.out.print("");
 
-            } // while ≥°
+            } // while ÎÅù
 
          } else if (line.startsWith("<TEAMVIEW>")) {
             namelist_a.setText("A team");
@@ -558,7 +571,7 @@ public class Client
             System.out.println(line);
             for (int i = 0; i < Integer.parseInt(many); i++) {
                String names = in.readLine();
-               if (names.charAt(0) == '<' && names.charAt(2) == '>') {// √≥¿Ω µÈæÓø‘¿ª ∂ß
+               if (names.charAt(0) == '<' && names.charAt(2) == '>') {// Ï≤òÏùå Îì§Ïñ¥ÏôîÏùÑ Îïå
                   System.out.println("hihi");
                   if (names.substring(0, 3).equals("<A>")) {
                      namelist_A[i - bcount] = names;
@@ -572,16 +585,16 @@ public class Client
                }
             }
             /*
-             * else if(line.matches(".*≈¿Â.*")) {//≈¿Â«ﬂ¿ª ∂ß int index=line.indexOf("¥‘"); String
+             * else if(line.matches(".*Ìá¥Ïû•.*")) {//Ìá¥Ïû•ÌñàÏùÑ Îïå int index=line.indexOf("Îãò"); String
              * name=line.substring(14,index);
              * 
              * if(line.matches(".*<A>.*")) { for(int i=0;i<namelist_A.size();i++) {
-             * if((namelist_A.get(i)).matches(name)) { namelist_A.remove(i); } } //µÈæÓø¬ ¿Ã∏ß¿Ã∂˚
-             * list Aø° ¿÷¥¬ ¿Ã∏ß¿Ã∂˚ ∫Ò±≥«ÿº≠ ∞∞¿∏∏È //Aø°º≠ remove } else if(line.matches(".*<B>.*")) {
+             * if((namelist_A.get(i)).matches(name)) { namelist_A.remove(i); } } //Îì§Ïñ¥Ïò® Ïù¥Î¶ÑÏù¥Îûë
+             * list AÏóê ÏûàÎäî Ïù¥Î¶ÑÏù¥Îûë ÎπÑÍµêÌï¥ÏÑú Í∞ôÏúºÎ©¥ //AÏóêÏÑú remove } else if(line.matches(".*<B>.*")) {
              * for(int i=0;i<namelist_B.size();i++) { if((namelist_B.get(i)).matches(name))
              * { namelist_B.remove(i); } }
              * 
-             * //µÈæÓø¬ ¿Ã∏ß¿Ã∂˚ list Bø° ¿÷¥¬ ¿Ã∏ß¿Ã∂˚ ∫Ò±≥«ÿº≠ ∞∞¿∏∏È //Bø°º≠ remove } }
+             * //Îì§Ïñ¥Ïò® Ïù¥Î¶ÑÏù¥Îûë list BÏóê ÏûàÎäî Ïù¥Î¶ÑÏù¥Îûë ÎπÑÍµêÌï¥ÏÑú Í∞ôÏúºÎ©¥ //BÏóêÏÑú remove } }
              */
             String astring = "", bstring = "";
             namelist_a.setText("<html>" + namelist_a.getText() + "<br>" + namelist_A[0] + "<br>" + namelist_A[1]
@@ -602,7 +615,7 @@ public class Client
               System.out.println(line);
               for (int i = 0; i < Integer.parseInt(many); i++) {
                  String names = in.readLine();
-                 if (names.charAt(0) == '<' && names.charAt(2) == '>') {// √≥¿Ω µÈæÓø‘¿ª ∂ß
+                 if (names.charAt(0) == '<' && names.charAt(2) == '>') {// Ï≤òÏùå Îì§Ïñ¥ÏôîÏùÑ Îïå
                     System.out.println("hihi");
                     if (names.substring(0, 3).equals("<A>")) {
                        namelist_A[i - bcount] = names;
@@ -655,8 +668,21 @@ public class Client
 
                {
 
-                  out.println(RelaySketch.TEAM);
-
+            	   out.println(RelaySketch.TEAM);
+                   String ateamnum=in.readLine();
+                   String bteamnum=in.readLine();
+                   if((ateamnum).equals("3"))
+                   {
+                 	  RelaySketch.afu=1;
+                 	  System.out.println("a : wowyo");
+                   }
+                   if((bteamnum.equals("3")))
+                   {
+                 	  {
+                     	  RelaySketch.bfu=1;
+                     	  System.out.println("b : wowyo");
+                       }  
+                   }
                   break;
 
                }
@@ -669,15 +695,9 @@ public class Client
 
          else if (line.startsWith("<GAMEFRAME>")) {
 
-              Image showImages = new ImageIcon("C:\\2-2\\first.png").getImage();//º“øµ
-               Image scaledImage =showImages.getScaledInstance(500,300,Image.SCALE_DEFAULT);//º“øµ
-               ImagePanel showImage=new ImagePanel(new ImageIcon(scaledImage).getImage());//º“øµ
-               //showImage.setSize(400,500);//º“øµ
-               showImage.setBounds(12, 360, 638, 294);//º“øµ
-               welcomePanel.add(showImage);//º“øµ
-               showImage.setVisible(true);
-               
-           
+              showImage2.setBounds(30, 170, 700, 470);//ÏÜåÏòÅ
+              welcomePanel.add(showImage2);//ÏÜåÏòÅ         
+            showImage2.setVisible(true);
             frame.setVisible(true);
 
          }
@@ -692,24 +712,18 @@ public class Client
 
          {
             if(SEQNUM!=1) {
-            Image showImages = new ImageIcon("C:\\2-2\\client_get.png").getImage();//º“øµ
-           Image scaledImage =showImages.getScaledInstance(500,300,Image.SCALE_DEFAULT);//º“øµ
-           ImagePanel showImage=new ImagePanel(new ImageIcon(scaledImage).getImage());//º“øµ
-           //showImage.setSize(400,500);//º“øµ
-           showImage.setBounds(12, 360, 638, 294);//º“øµ
-           welcomePanel.add(showImage);//º“øµ
+            Image showImages = new ImageIcon("C:\\2-2\\client_get.png").getImage();//ÏÜåÏòÅ
+           Image scaledImage =showImages.getScaledInstance(700,470,Image.SCALE_DEFAULT);//ÏÜåÏòÅ
+           ImagePanel showImage=new ImagePanel(new ImageIcon(scaledImage).getImage());//ÏÜåÏòÅ
+           
+           showImage.setBounds(0, 0, 700, 470);//ÏÜåÏòÅ
+           showImage2.add(showImage);//ÏÜåÏòÅ
            showImage.updateUI();    
            showImage.setVisible(true);
+           
            Thread.sleep(4000);
-        	 Image showImages2 = new ImageIcon("C:\\2-2\\first.png").getImage();//º“øµ
-             Image scaledImage2 =showImages2.getScaledInstance(500,300,Image.SCALE_DEFAULT);//º“øµ
-             ImagePanel showImage2=new ImagePanel(new ImageIcon(scaledImage2).getImage());//º“øµ
-            
-             //showImage.setSize(400,500);//º“øµ
-             showImage2.setBounds(12, 360, 638, 294);//º“øµ
-             welcomePanel.add(showImage2);//º“øµ
+           
              showImage.setVisible(false);
-             showImage2.setVisible(true);
            
              b = new UserRepaint();
 
@@ -717,13 +731,13 @@ public class Client
            
             }
             if(SEQNUM==1) {
-            	b = new UserRepaint();
+               b = new UserRepaint();
             }
          
 
          }
 
-	
+   
 
 
          else if(line.startsWith("<START>"))
@@ -731,6 +745,9 @@ public class Client
 
            
             while(check==0) {
+if(timeover==1) {
+break;	
+}
 
            System.out.print("");
            if(seqnum.equals("1")&&PASSPRESSED==1) {
@@ -752,7 +769,7 @@ public class Client
               
 
 
-           }//¡¯∞‚
+           }//ÏßÑÍ≤∏
            }
           
 
@@ -914,7 +931,17 @@ public class Client
            
 
          }
+         else if(line.startsWith("<AFULL>"))
+         {
+        	aful=1;
+        	System.out.println("wow : "+aful);
+         }
+         else if(line.startsWith("<BFULL>"))
+         {
+          bful=1;
 
+      	System.out.println("wow :asfda "+bful);
+         }
          else if (line.startsWith("<RECEIVE>"))
 
          {
@@ -1137,7 +1164,7 @@ public class Client
 
             label_word.setVisible(true);
           
-         } // ¡¯∞‚
+         } // ÏßÑÍ≤∏
          else if (line.startsWith("<GIVECATEGORY>"))
 
          {
@@ -1148,10 +1175,10 @@ public class Client
 
             label_category.setText(givencategory);
 
-         } // º≠πˆø°º≠ ¥‹æÓπﬁæ∆ø¿±‚,//¡¯∞‚
+         } // ÏÑúÎ≤ÑÏóêÏÑú Îã®Ïñ¥Î∞õÏïÑÏò§Í∏∞,//ÏßÑÍ≤∏
 
          else if (line.startsWith("<SCORE>")) {
-        	 
+            
 
           
 
@@ -1168,15 +1195,15 @@ public class Client
          else if (line.startsWith("<AANSWERSHEET>"))
 
          {
-            Image showImages = new ImageIcon("C:\\2-2\\client_get.png").getImage();//º“øµ
-             Image scaledImage =showImages.getScaledInstance(500,300,Image.SCALE_DEFAULT);//º“øµ
-             ImagePanel showImage=new ImagePanel(new ImageIcon(scaledImage).getImage());//º“øµ
-             //showImage.setSize(400,500);//º“øµ
-             showImage.setBounds(12, 360, 638, 294);//º“øµ
-             welcomePanel.add(showImage);//º“øµ
+             Image showImages = new ImageIcon("C:\\2-2\\client_get.png").getImage();//ÏÜåÏòÅ
+             Image scaledImage =showImages.getScaledInstance(700,470,Image.SCALE_DEFAULT);//ÏÜåÏòÅ
+             ImagePanel showImage=new ImagePanel(new ImageIcon(scaledImage).getImage());//ÏÜåÏòÅ
+             
+             showImage.setBounds(0, 0, 700, 470);//ÏÜåÏòÅ
+             showImage2.add(showImage);//ÏÜåÏòÅ
              showImage.updateUI();    
              showImage.setVisible(true);
-            
+     
              
              System.out.println("END");
 
@@ -1206,35 +1233,27 @@ public class Client
 
              }
              
-        	 Image showImages2 = new ImageIcon("C:\\2-2\\first.png").getImage();//º“øµ
-             Image scaledImage2 =showImages2.getScaledInstance(500,300,Image.SCALE_DEFAULT);//º“øµ
-             ImagePanel showImage2=new ImagePanel(new ImageIcon(scaledImage2).getImage());//º“øµ
-            
-             //showImage.setSize(400,500);//º“øµ
-             showImage2.setBounds(12, 360, 638, 294);//º“øµ
-             welcomePanel.add(showImage2);//º“øµ
+     
              showImage.setVisible(false);
-             showImage2.setVisible(true);
-        	 
+            
              
           
   
             
-         } // ¡¯∞‚
+         } // ÏßÑÍ≤∏
 
          else if (line.startsWith("<BANSWERSHEET>"))
 
          {
-            Image showImages = new ImageIcon("C:\\2-2\\client_get.png").getImage();//º“øµ
-             Image scaledImage =showImages.getScaledInstance(500,300,Image.SCALE_DEFAULT);//º“øµ
-             ImagePanel showImage=new ImagePanel(new ImageIcon(scaledImage).getImage());//º“øµ
-             //showImage.setSize(400,500);//º“øµ
-             showImage.setBounds(12, 360, 638, 294);//º“øµ
-             welcomePanel.add(showImage);//º“øµ
+             Image showImages = new ImageIcon("C:\\2-2\\client_get.png").getImage();//ÏÜåÏòÅ
+             Image scaledImage =showImages.getScaledInstance(700,470,Image.SCALE_DEFAULT);//ÏÜåÏòÅ
+             ImagePanel showImage=new ImagePanel(new ImageIcon(scaledImage).getImage());//ÏÜåÏòÅ
+             
+             showImage.setBounds(0, 0, 700, 470);//ÏÜåÏòÅ
+             showImage2.add(showImage);//ÏÜåÏòÅ
              showImage.updateUI();    
              showImage.setVisible(true);
-
-             
+                                  
             System.out.println("END");
 
             String q = get_answer();
@@ -1266,19 +1285,13 @@ public class Client
              
 
             }
-       	 Image showImages2 = new ImageIcon("C:\\2-2\\first.png").getImage();//º“øµ
-         Image scaledImage2 =showImages2.getScaledInstance(500,300,Image.SCALE_DEFAULT);//º“øµ
-         ImagePanel showImage2=new ImagePanel(new ImageIcon(scaledImage2).getImage());//º“øµ
-        
-         //showImage.setSize(400,500);//º“øµ
-         showImage2.setBounds(12, 360, 638, 294);//º“øµ
-         welcomePanel.add(showImage2);//º“øµ
+
          showImage.setVisible(false);
-         showImage2.setVisible(true);
-    	 
+    
+        
               
 
-         } // ¡¯∞‚
+         } // ÏßÑÍ≤∏
          
          else if (line.startsWith("<SEQUENCE>"))
 
@@ -1297,7 +1310,7 @@ public class Client
 
       }
 
-      // ø©±‚¥Ÿ∞° ¡°ºˆµÈ ∂Áøˆ¡÷¥¬ √¢ ø√∑¡∫¡
+      // Ïó¨Í∏∞Îã§Í∞Ä Ï†êÏàòÎì§ ÎùÑÏõåÏ£ºÎäî Ï∞Ω Ïò¨Î†§Î¥ê
 
    }
 
@@ -1322,26 +1335,25 @@ public class Client
 }
 
 class TimerThread extends Thread {  
-   public static int n = 200;
+   static int endgame=0;
 
-   private JLabel timerLabel;// ≈∏¿Ã∏” ∞™¿Ã √‚∑¬µ… ∑π¿Ã∫Ì
+   private JLabel timerLabel;// ÌÉÄÏù¥Î®∏ Í∞íÏù¥ Ï∂úÎ†•Îê† Î†àÏù¥Î∏î
 
    public TimerThread(JLabel timerLabel) {
 
-      this.timerLabel = timerLabel; // ≈∏¿Ã∏” ƒ´øÓ∆Æ∏¶ √‚∑¬«“ ∑π¿Ã∫Ì
+      this.timerLabel = timerLabel; // ÌÉÄÏù¥Î®∏ Ïπ¥Ïö¥Ìä∏Î•º Ï∂úÎ†•Ìï† Î†àÏù¥Î∏î
 
    }
 
-   // Ω∫∑πµÂ ƒ⁄µÂ run()¿Ã ¡æ∑·«œ∏È Ω∫∑πµÂ ¡æ∑·
+   // Ïä§Î†àÎìú ÏΩîÎìú run()Ïù¥ Ï¢ÖÎ£åÌïòÎ©¥ Ïä§Î†àÎìú Ï¢ÖÎ£å
 
    public void run() {
-   
-      while (n >= 0) 
+	   int n = 5;UserRepaint.isend = 0;
+	   
+      while (n >= 0&&endgame==0) 
       {
          timerLabel.setText(Integer.toString(n));
-               if(Client.endcheck==1) {
-                  break;
-               }
+               
                   
          if (n == 0)
 
@@ -1349,6 +1361,7 @@ class TimerThread extends Thread {
             if(Client.endcheck!=1) {
                System.out.println("hello");
                UserRepaint.isend = 1;
+               Client.timeover=1;
                Client.show_result();
                break;
             }
@@ -1362,7 +1375,7 @@ class TimerThread extends Thread {
              
          try {
 
-            Thread.sleep(1000);// 1√ ∞£∞›
+            Thread.sleep(1000);// 1Ï¥àÍ∞ÑÍ≤©
 
          } catch (InterruptedException e) {
 
@@ -1375,7 +1388,7 @@ class TimerThread extends Thread {
         
         timerLabel.setText(Integer.toString(n));
           try {
-               Thread.sleep(1000);// 1√ ∞£∞›
+               Thread.sleep(1000);// 1Ï¥àÍ∞ÑÍ≤©
 
             } catch (InterruptedException e) {
 
