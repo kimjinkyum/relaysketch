@@ -759,9 +759,11 @@ public class Server {
                users.remove(out);
                /* The exit user info(name) broadcast all user. */
                for (PrintWriter writer : users.values()) {
-                  writer.println("MESSAGE " + "***" + name + "님이 퇴장하셨습니다. ***");
-                  writer.println("<USEROUT>");
-                    writer.println(users.size());
+                   writer.println("<USEROUT>");
+                   writer.println(users.size());
+                   //writer.println("MESSAGE " + "***" + name + "님이 퇴장하셨습니다. ***");
+           
+                  
                     
                       for (int i = 0; i < user_howmuch; i++) {
                          if(names1[i].equals(name))
@@ -783,6 +785,11 @@ public class Server {
                      
                       user_howmuch--;
                } // for(Printwriter-퇴장소식)
+                          
+            for(PrintWriter writer : users.values())
+            {
+               writer.println("<STOP>");
+            }
             } // if(out!=null)
 
             try {
