@@ -169,7 +169,7 @@ public class Server {
                   /* if name is unique, then choose team.(A,B) */
                   if ((!team_a.containsKey(name)) && (!team_b.containsKey(name))) 
                   {
-                     System.out.println("잇어ㅅ없어");
+                     
                 	  out.println("<NAMEACCEPTED>");// - name is accepted(unique)
 
                      String temp = null;
@@ -291,7 +291,6 @@ public class Server {
                    restart=0;
             	   for(PrintWriter writer : team_a.values())
             	   {  
-            		   System.out.println("얼마나가냐?");
             		   writer.println("<ALLIN>");
             		  
             		   Client.canvascheck=1;
@@ -351,8 +350,7 @@ public class Server {
                   if(input.substring(9).equals("YES"))
                      restart++;
                     
-                  System.out.println(input.substring(9).equals("YES")+"pojpi+restart : "+restart);
-               }
+                                 }
                /**
                 *  if last user answer, then client send Aanswer message to server. 
                 * then check the answer is correct the word.  update score.
@@ -739,16 +737,13 @@ public class Server {
          } finally {
             // This client is going down! Remove its name and its print
 
-        	 System.out.println(name);
-        	 System.out.println(name.substring(4));
-            // writer from the sets, and close its socket.
+        	// writer from the sets, and close its socket.
             if (name != null) 
             {
                users.remove(name);
               
                if (name.startsWith("<A> ")) {
             	   
-            	   System.out.println("나가");
             	   team_a.remove(name.substring(4));
             	   ateamout--;
                   a--;
@@ -762,8 +757,6 @@ public class Server {
             } // if(name!=null)
             if (out != null) {
                users.remove(out);
-               System.out.println("나가");
-               
                /* The exit user info(name) broadcast all user. */
                for (PrintWriter writer : users.values()) {
                   writer.println("MESSAGE " + "***" + name + "님이 퇴장하셨습니다. ***");
