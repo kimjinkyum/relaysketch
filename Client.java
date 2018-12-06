@@ -562,7 +562,8 @@ public class Client
             } // while 끝
 
          } else if (line.startsWith("<TEAMVIEW>")) {
-            namelist_a.setText("A team");
+        	 
+        	 namelist_a.setText("A team");
             namelist_b.setText("B team");
             String many = in.readLine();
             int acount = 0, bcount = 0;
@@ -603,6 +604,7 @@ public class Client
             namelist_b.setText("<html>" + namelist_b.getText() + "<br>" + namelist_B[0] + "<br>" + namelist_B[1]
                   + "<br>" + namelist_B[2] + "</html>");
 
+        
          } 
          else if(line.startsWith("<USEROUT>"))
          {
