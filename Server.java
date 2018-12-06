@@ -51,7 +51,6 @@ import javax.swing.JLabel;
  */
 public class Server {
 	  private static int restart=0; 
-	  
    private static int asequence = 0, bsequence = 0;// sequence for each team.
    private static int acount = 0, bcount = 0;// specify user(by sequence)
    private static String[] names1 = new String[30];// name for user - using name list
@@ -235,20 +234,31 @@ public class Server {
                       * order to all users. : give word to first user and provide painting panel. and
                       * until end of the game chat is prohibited to prevent the outflow of answers.
                       **/
-                     if (users.size()== 6/*&&a==3&&b==3*/) {
+                     users.put(name, out);
+                     names1[user_howmuch] = name;
+                     user_howmuch++;
+                     for (PrintWriter writer : users.values()) {
+                         writer.println("<TEAMVIEW>");
+                         writer.println(users.size());
+                         for (int i = 0; i < user_howmuch; i++) {
+                            writer.println(names1[i]);
+                         }
+                      }
+                     if (users.size()== 3/*&&a==3&&b==3*/) {
                         for (PrintWriter writer : users.values()) {
                            writer.println("<ALLIN>");
                         } // for
                         give_category("A");// send category to users of a team
                         give_category("B");// send category to users of b team
                      } // if(all in one)
-                     names1[user_howmuch] = name;
-                     user_howmuch++;
+                   
 
-                     users.put(name, out);
                      break;
-                  } // if문 (이름 확인)
-
+                   // if문 (이름 확인)
+                  }
+                 
+                	             	 
+                  
                } // 싱크로
 
             } // while문
@@ -256,13 +266,10 @@ public class Server {
 
             // To every user send the information of other users.(team+name)
       
-            for (PrintWriter writer : users.values()) {
-               writer.println("<TEAMVIEW>");
-               writer.println(users.size());
-               for (int i = 0; i < user_howmuch; i++) {
-                  writer.println(names1[i]);
-               }
-            }
+          
+          
+          
+            
 
             /**
              * Accept messages from this client and broadcast same team member But game is
@@ -748,7 +755,7 @@ public class Server {
             } // if(name!=null)
             if (out != null) {
                users.remove(out);
-              
+            
                /* The exit user info(name) broadcast all user. */
                for (PrintWriter writer : users.values()) {
                   writer.println("MESSAGE " + "***" + name + "님이 퇴장하셨습니다. ***");
