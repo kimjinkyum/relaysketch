@@ -24,13 +24,12 @@ public class UserRepaint extends JFrame implements Serializable {
 
  JPanel paint_panel; // a drawing board
  JMenuBar menubar; // menu bar
- JMenu thickness_mu,figureSelect_mu; //Select two menus list
+ JMenu thickness_mu; //Select two menus list
  JButton eraser_bt;//eraser button
  JButton allclean_bt;//clean all button
  JButton brush_bt;//brush button
  JButton colorSelect_bt;//color button
  JButton image_bt;//send and save button 
- JButton fill_bt;//coloring all button
  Graphics graphics; // declaring for use Graphics2D class
  Graphics2D g;//Variables for storing image files
  Graphics2D g1; // Variables for storing image files
@@ -41,13 +40,10 @@ public class UserRepaint extends JFrame implements Serializable {
  JMenuItem[] figure_item = new JMenuItem[5];// lists for figure menu
  public final static int ERASER = 0; // Constant for Shape or Pencil Type
  public final static int PENCIL = 1; //use pencil thickness for drawing
- public final static int LINE = 2;// use line
- public final static int RECTANGLE = 3;//use rectangle
- public final static int CIRCLE = 4;//use circle
  public final static int RESET =5;//use all clean
  public static int check=0;
  public static int isend=0;
- ArrayList<Figure_Info> figureinfo = new ArrayList<Figure_Info>(); // repaintÇÔ¼ö È£Ãâ ½Ã ÀÌÀü Á¤º¸µéÀ» ºÎ¸£±â À§ÇÔ
+ ArrayList<Figure_Info> figureinfo = new ArrayList<Figure_Info>(); // repaintí•¨ìˆ˜ í˜¸ì¶œ ì‹œ ì´ì „ ì •ë³´ë“¤ì„ ë¶€ë¥´ê¸° ìœ„í•¨
  Stack<Figure_Info> trashcanStack = new Stack<Figure_Info>();
  
  /**
@@ -73,7 +69,7 @@ public class UserRepaint extends JFrame implements Serializable {
  // If ismove is true in mouse dragged, do it!
  int drawing_type = PENCIL; 
  Color selectedColor = Color.BLACK; // If any color is selected, here!
- int thickness = 2; // The basic line thickness is two.
+ int thickness = 4; // The basic line thickness is two.
  int startX; // Location of Start x coordinates
  int startY; //Location of Start Y coordinates
  int endX; // Location of End x coordinates
@@ -97,7 +93,7 @@ public class UserRepaint extends JFrame implements Serializable {
  Font selectedFont;
  String fontSize="10";
  String text="";
- String fontType="±¼¸²";
+ String fontType="êµ´ë¦¼";
  String text2="";
  //ArrayList<TextInfo> textinfo = new ArrayList<TextInfo>();
  //TextInfo t;
@@ -123,28 +119,7 @@ public class UserRepaint extends JFrame implements Serializable {
   g.setStroke(new BasicStroke(thickness,BasicStroke.CAP_ROUND,0));
   g1.setColor(selectedColor); //Color of lines to be drawn = set to selectedColor
   g1.setStroke(new BasicStroke(thickness,BasicStroke.CAP_ROUND,0));
-   
-  /**
-   * draw circle
-   */
-  if(drawing_type == CIRCLE){ 
-   if(endX-startX<0 && endY-startY<0) {// when the square is in the 4quadrant
-    g.drawOval(endX+10, endY+121, Math.abs(endX-startX)+10, Math.abs(endY-startY)+10);
-    g1.drawOval(endX+10, endY+121, Math.abs(endX-startX)+10, Math.abs(endY-startY)+10);
-   }
-   else if(endX-startX>=0 && endY-startY<0) { // when the square is in the 1quadrant
-    g.drawOval(startX+10, endY+121, Math.abs(endX-startX)+10, Math.abs(endY-startY)+10);
-    g1.drawOval(startX+10, endY+121, Math.abs(endX-startX)+10, Math.abs(endY-startY)+10);
-   }
-   else if(endX-startX<0 && endY-startY>=0) { // when the square is in the 3quadrant
-    g.drawOval(endX+10, startY+121, Math.abs(endX-startX)+10, Math.abs(endY-startY)+10);
-    g1.drawOval(endX+10, startY+121, Math.abs(endX-startX)+10, Math.abs(endY-startY)+10);
-   }
-   else { // when the square is in the 2quadrant
-    g.drawOval(startX+10, startY+121, Math.abs(endX-startX)+10, Math.abs(endY-startY)+10);
-    g1.drawOval(startX+10, startY+121, Math.abs(endX-startX)+10, Math.abs(endY-startY)+10);
-   }
-  }
+
   
 } //paint closing parenthesis
  
@@ -154,7 +129,7 @@ public class UserRepaint extends JFrame implements Serializable {
  public UserRepaint() { //JFrame for using drawing
     
   setLayout(null); 
-  setTitle("±×¸²ÆÇ"); 
+  setTitle("ê·¸ë¦¼íŒ"); 
   createMenu();
   setBackground(Color.WHITE);
   setSize(1035,540); // width,heigth
@@ -164,33 +139,29 @@ public class UserRepaint extends JFrame implements Serializable {
   eraser_bt = new JButton("Eraser");
   eraser_bt.setBorderPainted(false);
   //eraser_bt.setContentAreaFilled(false);
-  eraser_bt.setFont(new Font("±¼¸²",Font.PLAIN,22));
+  eraser_bt.setFont(new Font("êµ´ë¦¼",Font.PLAIN,22));
   eraser_bt.setBackground(Color.WHITE);
   brush_bt = new JButton("Pencil");
   brush_bt.setBorderPainted(false);
-  brush_bt.setFont(new Font("ÇÔÃÊ·Õµ¸¿ò",Font.PLAIN,22));
+  brush_bt.setFont(new Font("í•¨ì´ˆë¡±ë‹ì›€",Font.PLAIN,22));
   brush_bt.setBackground(Color.WHITE);
   colorSelect_bt = new JButton("COLOR");
   colorSelect_bt.setBorderPainted(false);
-  colorSelect_bt.setFont(new Font("ÇÔÃÊ·Õµ¸¿ò",Font.PLAIN,22));
+  colorSelect_bt.setFont(new Font("í•¨ì´ˆë¡±ë‹ì›€",Font.PLAIN,22));
   colorSelect_bt.setBackground(Color.WHITE);
   allclean_bt = new JButton("All Clean");
   allclean_bt.setForeground(Color.RED);
   allclean_bt.setBorderPainted(false);
-  allclean_bt.setFont(new Font("ÇÔÃÊ·Õµ¸¿ò",Font.PLAIN,22));
+  allclean_bt.setFont(new Font("í•¨ì´ˆë¡±ë‹ì›€",Font.PLAIN,22));
   allclean_bt.setBackground(Color.WHITE);
   
   image_bt = new JButton("Save");
   image_bt.setBorderPainted(false);
   image_bt.setForeground(Color.BLUE);
-  image_bt.setFont(new Font("ÇÔÃÊ·Õµ¸¿ò",Font.BOLD,22));
+  image_bt.setFont(new Font("í•¨ì´ˆë¡±ë‹ì›€",Font.BOLD,22));
   image_bt.setBackground(Color.WHITE); 
 
-  fill_bt = new JButton("paint");
-  fill_bt.setBorderPainted(false);
-  fill_bt.setFont(new Font("ÇÔÃÊ·Õµ¸¿ò",Font.PLAIN,22));
-  fill_bt.setBackground(Color.WHITE); 
-
+  
   paint_panel = new JPanel();
   
   paint_panel.setBackground(Color.WHITE);//set background of panel white 
@@ -201,7 +172,7 @@ public class UserRepaint extends JFrame implements Serializable {
 
   allclean_bt.setBounds(355,10,150,40);
   colorSelect_bt.setBounds(515,10,150,40);
-  fill_bt.setBounds(675,10,150,40);
+
   image_bt.setBounds(835,10,150,40);
   paint_panel.setBounds(10,60,1170,470);
   paint_panel.setSize(1000,400);
@@ -209,7 +180,7 @@ public class UserRepaint extends JFrame implements Serializable {
   add(brush_bt);
   add(colorSelect_bt);
   add(allclean_bt);
-  add(fill_bt);
+
   add(image_bt);
 
   add(paint_panel);
@@ -312,23 +283,23 @@ public class UserRepaint extends JFrame implements Serializable {
    //select font type
    String str = e.getActionCommand();
    switch(str) {
-   case "±¼¸²" :
-    fontType = "±¼¸²";
+   case "êµ´ë¦¼" :
+    fontType = "êµ´ë¦¼";
     break;
-   case "±Ã¼­" :
-    fontType = "±Ã¼­";
+   case "ê¶ì„œ" :
+    fontType = "ê¶ì„œ";
     break;
-   case "¸¼Àº°íµñ" :
-    fontType = "¸¼Àº°íµñ";
+   case "ë§‘ì€ê³ ë”•" :
+    fontType = "ë§‘ì€ê³ ë”•";
     break;
-   case "µ¸¿ò" :
-    fontType = "µ¸¿ò";
+   case "ë‹ì›€" :
+    fontType = "ë‹ì›€";
     break;
-   case "ÇÔÃÊ·Òµ¸¿ò" :
-    fontType = "ÇÔÃÊ·Òµ¸¿ò";
+   case "í•¨ì´ˆë¡¬ë‹ì›€" :
+    fontType = "í•¨ì´ˆë¡¬ë‹ì›€";
     break;
-   case "³ª´®½ºÄù¾î¶ó¿îµå" :
-    fontType = "³ª´®½ºÄù¾î¶ó¿îµå";
+   case "ë‚˜ëˆ”ìŠ¤í€˜ì–´ë¼ìš´ë“œ" :
+    fontType = "ë‚˜ëˆ”ìŠ¤í€˜ì–´ë¼ìš´ë“œ";
     break;
    }
   }
@@ -340,19 +311,19 @@ public class UserRepaint extends JFrame implements Serializable {
   Textmenubar = new JMenuBar();
   Textmenubar.setBackground(Color.WHITE);
   font_mu = new JMenu("Font");
-  font_mu.setFont(new Font("ÇÔÃÊ·Õµ¸¿ò",Font.PLAIN,15));
+  font_mu.setFont(new Font("í•¨ì´ˆë¡±ë‹ì›€",Font.PLAIN,15));
   TextMenuActionListener textmenulistener = new TextMenuActionListener();
-  font_item[0] = new JMenuItem("±¼¸²");
-  font_item[1] = new JMenuItem("±Ã¼­");
-  font_item[2] = new JMenuItem("¸¼Àº°íµñ");
-  font_item[3] = new JMenuItem("µ¸¿ò");
-  font_item[4] = new JMenuItem("ÇÔÃÊ·Òµ¸¿ò");
-  font_item[5] = new JMenuItem("³ª´®½ºÄù¾î¶ó¿îµå");
+  font_item[0] = new JMenuItem("êµ´ë¦¼");
+  font_item[1] = new JMenuItem("ê¶ì„œ");
+  font_item[2] = new JMenuItem("ë§‘ì€ê³ ë”•");
+  font_item[3] = new JMenuItem("ë‹ì›€");
+  font_item[4] = new JMenuItem("í•¨ì´ˆë¡¬ë‹ì›€");
+  font_item[5] = new JMenuItem("ë‚˜ëˆ”ìŠ¤í€˜ì–´ë¼ìš´ë“œ");
   
   for(int i=0 ; i<6 ; i++) {
    font_item[i].addActionListener(textmenulistener);
    font_item[i].setBackground(Color.WHITE);
-   font_item[i].setFont(new Font("ÇÔÃÊ·Õµ¸¿ò",Font.PLAIN,12));
+   font_item[i].setFont(new Font("í•¨ì´ˆë¡±ë‹ì›€",Font.PLAIN,12));
    font_mu.add(font_item[i]);
    if(i==5) continue;
    font_mu.addSeparator();
@@ -366,10 +337,9 @@ public class UserRepaint extends JFrame implements Serializable {
  void createMenu() { 
   menubar = new JMenuBar(); // create menu bar
   menubar.setBackground(new Color(213,213,213)); 
-  thickness_mu = new JMenu("±½±â"); // create "±½±â"menu
-  thickness_mu.setFont(new Font("ÇÔÃÊ·Ò¹ÙÅÁ",Font.PLAIN,15));
-  figureSelect_mu = new JMenu("µµÇü"); // create "µµÇü"menu
-  figureSelect_mu.setFont(new Font("ÇÔÃÊ·Ò¹ÙÅÁ",Font.PLAIN,15));
+  thickness_mu = new JMenu("êµµê¸°"); // create "êµµê¸°"menu
+  thickness_mu.setFont(new Font("í•¨ì´ˆë¡¬ë°”íƒ•",Font.PLAIN,15));
+  
 
   MenuActionListener menulistener = new MenuActionListener();
   thickness_item[0] = new JMenuItem("2");
@@ -378,24 +348,14 @@ public class UserRepaint extends JFrame implements Serializable {
   thickness_item[3] = new JMenuItem("10");
   
   for(int i=0 ; i<4 ; i++) {
-   thickness_item[i].setFont(new Font("ÇÔÃÊ·Ò¹ÙÅÁ",Font.PLAIN,15));
+   thickness_item[i].setFont(new Font("í•¨ì´ˆë¡¬ë°”íƒ•",Font.PLAIN,15));
    thickness_item[i].addActionListener(menulistener);
    thickness_mu.add(thickness_item[i]); 
    if(i==3) continue;
    thickness_mu.addSeparator(); // separation line
   }
-  
-  figure_item[0] = new JMenuItem("--  line");
-  figure_item[1] = new JMenuItem("¡à  rectangle");
-  figure_item[2] = new JMenuItem("¡Û  circle");
-  for(int i=0 ; i<3 ; i++) {
-   figure_item[i].setFont(new Font("ÇÔÃÊ·Ò¹ÙÅÁ",Font.PLAIN,15));
-   figure_item[i].addActionListener(menulistener);
-   figureSelect_mu.add(figure_item[i]);
-   figureSelect_mu.addSeparator();
-  }
+
   menubar.add(thickness_mu); // Add a thickness menu to the menu Bar
-  menubar.add(figureSelect_mu); // Add a figure menu to the menu Bar
   setJMenuBar(menubar); //setting menu bar
  }
  // ----------------------------- MenuActionListener class -------------------------------------//
@@ -417,28 +377,6 @@ public class UserRepaint extends JFrame implements Serializable {
     thickness = 10;
     break;
     //select figure type
-   case "--  line" :
-    drawing_type = LINE;
-    if(selectedColor == Color.WHITE) {
-     selectedColor = Color.BLACK;
-    }
-    isSketch=false;
-    break;
-   case "¡à  rectangle" :
-    drawing_type = RECTANGLE;
-    if(selectedColor == Color.WHITE) {
-     selectedColor = Color.BLACK;
-    }
-    isSketch=false;
-    break;
-  
-   case "¡Û  circle" :
-    drawing_type = CIRCLE;
-    if(selectedColor == Color.WHITE) {
-     selectedColor = Color.BLACK;
-    }
-    isSketch=false;
-    break;
    }
    
   }
@@ -456,9 +394,6 @@ public class UserRepaint extends JFrame implements Serializable {
    startXforsave = startX; // When pressed, remember the starting point.
    startYforsave = startY;
    ismove = true;  // for move
-   if(drawing_type == LINE) {
-    mousecount++;
-   }
   }
   public void mouseClicked(MouseEvent e) {}
   public void mouseEntered(MouseEvent e) {}
@@ -498,7 +433,7 @@ public class UserRepaint extends JFrame implements Serializable {
     endY = e.getY();
  
     
-    if(drawing_type == PENCIL || drawing_type == ERASER || drawing_type == LINE ) {
+    if(drawing_type == PENCIL || drawing_type == ERASER ) {
      
      if(isShift==true) {
       makeShiftPosition(startX,startY,endX,endY);
@@ -514,18 +449,8 @@ public class UserRepaint extends JFrame implements Serializable {
      startYpoints.add(startY+121);
      endXpoints.add(endX+10);
      endYpoints.add(endY+121);
-     if(drawing_type == LINE) {
-      repaint();
-     }
     }
     
-   
-    if(drawing_type == RECTANGLE ) { //remove when moving mouse
-     repaint(); 
-    }
-    if(drawing_type == CIRCLE ) {
-     repaint();
-    }
   //Only when it's in the shape of a sketch, change the position of the start and end to continue with the dot.
     if(isSketch==true) { 
      startX = endX;
