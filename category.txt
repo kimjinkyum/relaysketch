@@ -1,0 +1,12 @@
+FOOD
+hotdog,ice cream,pizza,chicken,pasta,ramen,dumpling,tteok bo kki,sushi,apple pie,hamburger,taco,steak,sandwich,salad,cake,kimbab,hotcake,bi bim bab,curry
+MOVIE
+harrypotter,frozen,ice age,lion king,twilight,cinderella,titanic,matrix,iron man,spiderman,leon,kung fu panda,superbad,lala land,wonder woman,sound of music,veteran,up
+FRUIT
+apple,banana,mango,orange,pear,pineapple,watermelon,strawberry,kiwi,grape,lemon,grapefruit,durian,peach,plum,cherry,avocado,dragon fruit 
+AMINAL
+dog,cat,mouse,panda,owl,tiger,lion,bear,pig,rabbit,monkey,hippo,crocodile,donkey,graffe,cow,ship,elephant,frog,dorphine,frog,turtle,penguin
+OBJECT
+computer,fan,chair,air conditional,window,glasses,mouse,television,bag,cell phone,concent,bed,door,shoes,ring,cup,gas range,micro wave,key,water purifier
+JOBS
+police officer,student,announcer,mother,business man,judge,fire fighter,delivery man,waiter,chef,taxi driver,doctor,pilot,soldier,director,actor
