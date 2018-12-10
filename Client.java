@@ -1408,7 +1408,7 @@ class TimerThread extends Thread {
 
    public void run() {
          UserRepaint.isend = 0;
-         int n=20;
+         int n=100;
          
          while (n >= 0) //찬빈
          {
