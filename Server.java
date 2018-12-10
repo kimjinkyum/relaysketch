@@ -768,13 +768,13 @@ public class Server {
             	   
             	   team_a.remove(name.substring(4));
             	   ateamout--;
-                  a--;
+                  a=a-1;
                   
                } // if(이름 A팀)
                if (name.startsWith("<B> ")) {
                   team_b.remove(name.substring(4));
                   bteamout--;
-                  b--;
+                  b=b-1;
                } // if(이름 B팀)
             } // if(name!=null)
             if (out != null) {
@@ -805,7 +805,7 @@ public class Server {
                         writer.println(names1[i]);
                       }
                      
-                      user_howmuch--;
+                      user_howmuch=user_howmuch-1;
                } // for(Printwriter-퇴장소식)
                           
             for(PrintWriter writer : users.values())
