@@ -1,4 +1,3 @@
-package kkk;
 
 import java.awt.BorderLayout;
 
