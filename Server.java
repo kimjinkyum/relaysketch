@@ -38,16 +38,18 @@ import javax.swing.JLabel;
  * <GIVECATEGORY>: give to client when game is start - show category to every user. 
  * <GIVEWORD>: give to client but only to first user- show word to first user. 
  * <SEND>: give to client if the user in turn?? - show painting panel.
- * <START>: ??
+ * <START>: wait until the drawing panel is fully used.
  * <TEAMVIEW>: give to client if new user is enter - show user list.
  * <SCORE>: give to client if last client is answer- update score.
  * <Aanswer>/<Banswer>: give from client after last client answer - check if the answer is correct.
  * <ANSWERCORRECT> : give to client when Aanswer/Banswer message is give then the answer is correct - send information to last user.
  * <ANSWERWRONG>:give to client when Aanswer/Banswer message is give then the answer is wrong - send information to last user.
- * <CANVAS>: ??
+ * <ACANVAS>: Ateam member gives picture to server
+ * <BCANVAS>: Bteam member gives picture to server
  * <OUT>:give to client when file transfer is end- socket for file close
- * <RECEIVE>:??
+ * <ARECEIVE/BRECEIVE>:give to client previous user's picture by server
  * <AANSWERSHEET>/BAANSWERSHEET> give to client when last client have to answer - answer.
+ * <AFULL/BFULL>: team member is full so automatically move to other.
  */
 public class Server {
 	  private static int restart=0; 
@@ -57,8 +59,8 @@ public class Server {
    private static int user_howmuch = 0;// number of user
    private static final int PORT = 5880;// The relay sketch server port number- connect client
    private static int ateamout = 0, bteamout = 0;// number of exit user.
-   private static int a = 0, b = 0;// ???
-   
+   private static int a = 0, b = 0;// amount of team members
+   private static int stopstart=0;
    /*
     * The string is the key(users)of clients in the chat room so that we can check
     * that new clients are not registering name already in use. Then mapping
@@ -78,7 +80,7 @@ public class Server {
    private static int size_word = 0;// word size
    private static int indexword_a = 0;// sequence of a word index
    private static int indexword_b = 0;// sequence of b word index
-
+   private static int zero=0;
    /*
     * main function make category, word make socket and listen it accept then run
     * handler.
@@ -172,7 +174,6 @@ public class Server {
                      
                 	  out.println("<NAMEACCEPTED>");// - name is accepted(unique)
 
-                     String temp = null;
 
                      out.println("<SUBMITTEAM>");// server message: team choice
                      team = in.readLine();
@@ -191,8 +192,7 @@ public class Server {
                            b++;
                         }
 
-                        else 
-                        {
+                        else {
                            team_a.put(name, out);
                            name = "<A> " + name;
                            a++;
@@ -207,7 +207,7 @@ public class Server {
 
                         if (b >= 3) {
                            team_a.put(name, out);
-                           name = "<A> " + name;
+                           name = "<A> " +name;
                            a++;
                            out.println("<AFULL>");
                            
@@ -224,12 +224,7 @@ public class Server {
 
                      out.println("<GAMEFRAME>");// now check all things, then game is start (game panel show).
 
-                     /*
-                      * array list 있으니까 뺼까???? // Print new user info in chat room except new user's
-                      * chat room for (PrintWriter writer : users.values()) {
-                      * writer.println("MESSAGE " + "***" + name + "님이 입장하셨습니다. ***"); } //
-                      * for(printwriter)
-                      */
+                     
                      users.put(name, out);
 
                      /**
@@ -237,7 +232,7 @@ public class Server {
                       * order to all users. : give word to first user and provide painting panel. and
                       * until end of the game chat is prohibited to prevent the outflow of answers.
                       **/
-                     users.put(name, out);
+                    
                      names1[user_howmuch] = name;
                      user_howmuch++;
                      for (PrintWriter writer : users.values()) {
@@ -247,13 +242,12 @@ public class Server {
                             writer.println(names1[i]);
                          }
                       }
-                     if (users.size()== 6&&a==3&&b==3) {
-                        for (PrintWriter writer : users.values()) 
-                        {
-                           writer.println("<ALLIN>");
+                     if (users.size()==6&&a==3&&b==3) {
+                        for (PrintWriter writer : users.values()) {
+                           writer.println("<ALLIN>");//모든 플레이어가 들어왔다는 메세지를 보냄으로서 게임을 시작한다.
                         } // for
-                        give_category("A");// send category to users of a team
-                        give_category("B");// send category to users of b team
+                        // send category to users of a team
+                        give_category();// send category to users of b team
                      } // if(all in one)
                    
                      
@@ -284,30 +278,47 @@ public class Server {
             int gamea = 0, gameb = 0;
             while (true) {
                String input = "";
+               //유저들 6명 모두가 restart를 yes라고 응답하였을때
                if(restart==6)
                {    
+            	   //게임진행 변수들을 모두 초기화 
                    indexword_b=0;
                    indexword_a=0;
                    acount=0;
                    bcount=0;
                    restart=0;
+                   score_a=0; 
+                   score_b=0;
             	   for(PrintWriter writer : team_a.values())
             	   {  
-            		   writer.println("<ALLIN>");
+            		   writer.println("<ALLIN>"); 
             		  
             		   Client.canvascheck=1;
             	   }
-            	   give_category("A");// send category to users of a team
-                   
             	   for(PrintWriter writer : team_b.values())
             	   {  
             		   writer.println("<ALLIN>");
             		  
             		   Client.canvascheck=1;
             	   }
-            	   give_category("B");// send category to users of b team
+            	   give_category();// send category to users of b team
             	   }
-            	    
+            	  if(stopstart==1)//no를 누를때마다 팝업이 뜨는 것을 방지해주기 위함
+            	  {
+            		  for(PrintWriter writer : team_a.values())
+               	   {  
+               		   writer.println("<NORESTART>");
+               		  
+               		   Client.canvascheck=1;
+               	   }
+               	   for(PrintWriter writer : team_b.values())
+               	   {  
+
+               		   writer.println("<NORESTART>");
+               		   Client.canvascheck=1;
+               	   }
+               	   
+            	  }
                
                /*
                 * gamea is 1 when the last person answer and next word show to first user, then
@@ -355,11 +366,12 @@ public class Server {
 
                input = in.readLine();
                Image k = null;
-               if(input.startsWith("<RESTART>")) 
+               if(input.startsWith("<RESTART>"))//유저들이 result판넬이 뜨고나서 yes or no버튼을 눌렀을때 yes인지 no인지 알아내기위함 restart의 갯수를 파악.
                {
                   if(input.substring(9).equals("YES"))
                      restart++;
-                    
+                    if(input.substring(9).equals("NO"))
+                    	stopstart++;
                                  }
                /**
                 *  if last user answer, then client send Aanswer message to server. 
@@ -437,7 +449,6 @@ public class Server {
                                * */
                               
                               if (acount == incount_a) {
-                            	 System.out.println("놔우아누");
                                  while (check==0) {
                                     chattingcheck = 1;
                                     ServerSocket soc2 = new ServerSocket(11111);
@@ -551,7 +562,7 @@ public class Server {
                                     } // if문
 
                                  } // while(check==0 인지 체크)
-check2=0;
+                              check2=0;
                                  
                                 
                                  //if the sequence is 3 (game sequence is 0) then user answer.
@@ -560,8 +571,7 @@ check2=0;
                                     writer.println("<AANSWERSHEET>");
                                  } 
                                  
-                                 /*
-                                  * 어케 설명????*/
+                                
                                  else 
                                  {
                                     writer.println("<SEND>");
@@ -720,7 +730,7 @@ check2=0;
                 * */
                if (chattingcheck == 0) 
                {
-                  if (input.equals("<send>")||input.equals("nothing")||input.startsWith("<Aanswer>")||input.startsWith("<Banswer>")) {
+                  if (input.equals("<send>")||input.startsWith("<Aanswer>")||input.startsWith("<Banswer>")||input.startsWith("<RESTART>")) {
                      continue;
                   }
 
@@ -819,13 +829,11 @@ check2=0;
     *  give word to first user and provide painting panel
  * @throws IOException 
     */
-   private static void give_category(String team) throws IOException {
+   private static void give_category() throws IOException {
 	  
 	   Random random = new Random();
-	   choice_category = random.nextInt(6);// 0~5
-	   random_word();
-	   
-	   if (team.equals("A")) {
+	      choice_category = random.nextInt(6);// 0~5
+	      random_word();
 		   asequence=0;
          for (PrintWriter writer : team_a.values()) {
             int seq = asequence + 1;
@@ -840,14 +848,12 @@ check2=0;
                writer.println("<START>");
                // chat is forbidden.
 
-               
             }
             asequence++;
          }
       
          // for(team a)
-      } else if (team.equals("B")) {
-    	     bsequence=0;
+            bsequence=0;
     	     
          for (PrintWriter writer : team_b.values()) {
         	 int bseq=bsequence+1;
@@ -867,7 +873,7 @@ check2=0;
          } // for(team_b)
       }
 
-   }
+   
 
    /** radnom_category
     * the integer choice randomly(0~5)
