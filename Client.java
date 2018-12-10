@@ -195,9 +195,9 @@ public class Client
    static int timercheck = 0;// check if time is over.
    int SEQNUM=0;//??
    
-   Image showImages2 = new ImageIcon("C:\\2-2\\first.png").getImage();//소영
-   Image scaledImage2 =showImages2.getScaledInstance(700,470,Image.SCALE_DEFAULT);//소영
-   ImagePanel showImage2=new ImagePanel(new ImageIcon(scaledImage2).getImage());//소영
+   Image showImages2 = new ImageIcon("C:\\2-2\\first.png").getImage(); 
+   Image scaledImage2 =showImages2.getScaledInstance(700,470,Image.SCALE_DEFAULT); 
+   ImagePanel showImage2=new ImagePanel(new ImageIcon(scaledImage2).getImage()); 
    
    RelaySketch relay = new RelaySketch();
 
@@ -211,7 +211,7 @@ public class Client
       
      outframe.setSize(400, 160);
      outframe.setLocationRelativeTo(null);
-      outPanel.setBackground(Color.WHITE); //은서
+      outPanel.setBackground(Color.WHITE);  
       JLabel outlabel= new JLabel("THE GAME IS END.");
       TitledBorder tb = new TitledBorder(new LineBorder(Color.black));
       
@@ -219,7 +219,7 @@ public class Client
       outlabel.setBorder(tb);
       outlabel.setForeground(new Color(255, 0, 0));
 
-      outlabel.setFont(new Font("Calibri", Font.BOLD, 30)); //은서
+      outlabel.setFont(new Font("Calibri", Font.BOLD, 30));  
 
       outlabel.setHorizontalAlignment(SwingConstants.CENTER);
       outPanel.add(outlabel, BorderLayout.CENTER);
@@ -271,34 +271,34 @@ public class Client
        }
    });
   
-        JLabel question = new JLabel();//은서
-        question.setText("Do you want to RESTART the game?"); //은서
-        question.setFont(new Font("Calibri", Font.BOLD, 28));//은서
-        question.setBounds(41, 100, 431, 81);//은서
+        JLabel question = new JLabel(); 
+        question.setText("Do you want to RESTART the game?");  
+        question.setFont(new Font("Calibri", Font.BOLD, 28)); 
+        question.setBounds(41, 100, 431, 81); 
   
-       JLabel result_score= new JLabel(); //은서
+       JLabel result_score= new JLabel();  
       //result_score.setSize(130, 88);
      // result_score.setLocation(165, 44);
        
-      result_score.setFont(new Font("Calibri", Font.BOLD, 50)); //은서
+      result_score.setFont(new Font("Calibri", Font.BOLD, 50));  
       result_score.setVisible(true);
       label_score.setVisible(true);
       label_score.setText("0:0");
       
-      JPanel board = new JPanel();//은서
-      board.setBackground(Color.white);//은서
-      board.setBounds(12, 10, 460, 100);//은서
+      JPanel board = new JPanel(); 
+      board.setBackground(Color.white); 
+      board.setBounds(12, 10, 460, 100); 
       
       TitledBorder tb = new TitledBorder(new LineBorder(Color.black));
       
       resultPanel.setBorder(tb);
-      resultPanel.add(board);//은서
-      board.setLayout(null);//은서
+      resultPanel.add(board); 
+      board.setLayout(null); 
       
       result_score.setBounds(160, 20, 250, 90);
       board.add(result_score);
      
-      board.setVisible(true);//은서
+      board.setVisible(true); 
       
       int score_first= Integer.parseInt(result_end.substring(0,result_end.indexOf(":")));
       int score_second= Integer.parseInt(result_end.substring(result_end.indexOf(":")+1));
@@ -321,22 +321,22 @@ public class Client
 
       }
      
-      yes.setBounds(100, 190, 120, 41);//은서
-      yes.setFont(new Font("Arial Black", Font.PLAIN, 22));//은서
-      yes.setBackground(Color.WHITE); //은서
+      yes.setBounds(100, 190, 120, 41); 
+      yes.setFont(new Font("Arial Black", Font.PLAIN, 22)); 
+      yes.setBackground(Color.WHITE);  
       
-      no.setBounds(270, 190, 120, 41);//은서
-      no.setFont(new Font("Arial Black", Font.PLAIN, 22));//은서
-      no.setBackground(Color.WHITE);//은서
+      no.setBounds(270, 190, 120, 41); 
+      no.setFont(new Font("Arial Black", Font.PLAIN, 22)); 
+      no.setBackground(Color.WHITE); 
       
       
-      resultframe.getContentPane().add(resultPanel);//은서
-      resultPanel.setLayout(null);//은서
+      resultframe.getContentPane().add(resultPanel); 
+      resultPanel.setLayout(null); 
       resultPanel.add(yes);
       resultPanel.add(no);
-      resultPanel.add(question);//은서
+      resultPanel.add(question); 
       resultframe.setVisible(true);
-      resultframe.repaint(); //찬빈
+      resultframe.repaint();  
       
    }
    /**correct_answer
@@ -386,16 +386,16 @@ public class Client
    {
           frame.setSize(1280, 720);
          frame.getContentPane().add(welcomePanel, BorderLayout.NORTH);
-         panel.setBounds(782, 100, 470, 420); //은서
+         panel.setBounds(782, 100, 470, 420);  
          frame.setResizable(false);// 사이즈 조정x
          frame.setLocationRelativeTo(null);
          textField.setEditable(false);
          panel.add(textField, "North");       
-         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);//은서
+         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
          
          messageArea.setEditable(false);
-         messageArea.setLineWrap(true);//은서        
-         panel.add(new JScrollPane(messageArea)); //은서        
+         messageArea.setLineWrap(true);         
+         panel.add(new JScrollPane(messageArea));          
          panel.setBackground(Color.GRAY);     
          welcomePanel.add(panel);
          welcomePanel.add(timerLabel, "NORTH");
@@ -412,7 +412,7 @@ public class Client
          label_category.setForeground(Color.black);
          label_category.setFont(new Font("Calibri", Font.BOLD | Font.ITALIC, 45));
          label_category.setBounds(14, 10, 266, 68);
-         welcomePanel.add(label_category);// 진겸
+         welcomePanel.add(label_category); 
          
          label_word.setForeground(Color.black);
          label_word.setFont(new Font("Calibri", Font.BOLD | Font.ITALIC, 28));
@@ -439,9 +439,9 @@ public class Client
          label_score.setBounds(547, 86, 103, 56);
          welcomePanel.add(label_score);
         
-         label_score.setVisible(true); //은서
-         //label_score.setVisible(false); //진겸
-         label_word.setVisible(false);// 진겸
+         label_score.setVisible(true);  
+         //label_score.setVisible(false);  
+         label_word.setVisible(false); 
 
    }
    
@@ -603,8 +603,8 @@ public class Client
 		
  else if (line.startsWith("<GAMEFRAME>")) {
 
-      showImage2.setBounds(30, 170, 700, 470);//소영
-      welcomePanel.add(showImage2);//소영         
+      showImage2.setBounds(30, 170, 700, 470); 
+      welcomePanel.add(showImage2);          
     showImage2.setVisible(true);
     frame.setVisible(true);
 
@@ -617,7 +617,7 @@ public class Client
                else if (line.startsWith("<ALLIN>"))
 
                {
-                  timeover=0; //찬빈
+                  timeover=0;  
                   
                   gamestart=1;
 
@@ -670,7 +670,7 @@ public class Client
 
                   label_category.setText(givencategory);
 
-               } // 서버에서 단어받아오기,//진겸
+               } // 서버에서 단어받아오기, 
         
         
      // 서버에게 norestart라는 메시지 오면 게임이 더 이상 중지 하는 것이 아니기 때문에 show_Out_End 끝났다는 메소드 불러옴
@@ -685,7 +685,7 @@ public class Client
          {
             
             if(gamestart==1) { 
-                // n=0; //찬빈
+                // n=0;  
                  
                  endcheck=1;
              }
@@ -1140,12 +1140,12 @@ public class Client
          else if (line.startsWith("<AANSWERSHEET>"))
 
          {
-             Image showImages = new ImageIcon("C:\\2-2\\client_get.png").getImage();//소영
-             Image scaledImage =showImages.getScaledInstance(700,470,Image.SCALE_DEFAULT);//소영
-             ImagePanel showImage=new ImagePanel(new ImageIcon(scaledImage).getImage());//소영
+             Image showImages = new ImageIcon("C:\\2-2\\client_get.png").getImage(); 
+             Image scaledImage =showImages.getScaledInstance(700,470,Image.SCALE_DEFAULT); 
+             ImagePanel showImage=new ImagePanel(new ImageIcon(scaledImage).getImage()); 
              
-             showImage.setBounds(0, 0, 700, 470);//소영
-             showImage2.add(showImage);//소영
+             showImage.setBounds(0, 0, 700, 470); 
+             showImage2.add(showImage); 
              showImage.updateUI();    
              showImage.setVisible(true);
      
@@ -1183,18 +1183,18 @@ public class Client
      
              showImage.setVisible(false);// 그림 보여주던것을 false로 바꾼다.
          
-         } // 진겸
+         }  
         /*B팀 마지막사람에게 정답판넬을 띄우는 것으로 A팀과 동일하게 작동*/
 		
          else if (line.startsWith("<BANSWERSHEET>"))
 
          {
-             Image showImages = new ImageIcon("C:\\2-2\\client_get.png").getImage();//소영
-             Image scaledImage =showImages.getScaledInstance(700,470,Image.SCALE_DEFAULT);//소영
-             ImagePanel showImage=new ImagePanel(new ImageIcon(scaledImage).getImage());//소영
+             Image showImages = new ImageIcon("C:\\2-2\\client_get.png").getImage(); 
+             Image scaledImage =showImages.getScaledInstance(700,470,Image.SCALE_DEFAULT); 
+             ImagePanel showImage=new ImagePanel(new ImageIcon(scaledImage).getImage()); 
              
-             showImage.setBounds(0, 0, 700, 470);//소영
-             showImage2.add(showImage);//소영
+             showImage.setBounds(0, 0, 700, 470); 
+             showImage2.add(showImage); 
              showImage.updateUI();    
              showImage.setVisible(true);
                                   
@@ -1221,7 +1221,7 @@ public class Client
             }
 
          showImage.setVisible(false);
-         } // 진겸
+         }  
       //서버에서 자신의 순서를 받는 것으로 <SEQUENCE>라는 메세지 뒤에 자신의 순서가 붙어서 온다.
 
          else if (line.startsWith("<SEQUENCE>"))
@@ -1234,15 +1234,15 @@ public class Client
       //그림판을 띄우라는 메세지로 SEQNUM이 1일때는 처음사람으로 받아온 그림을 띄워줄 필요가 없고 처음사람이 아닐 경우 위에서 받아온 그림을 화면에 띄워준다.
          else if (line.startsWith("<SEND>"))
 
-         { //찬빈 
+         {   
             if(SEQNUM!=1) {//처음 순서인 사람은 전에 유저가 그린 그림이 없기 때문에 제외
 				
-            Image showImages = new ImageIcon("C:\\2-2\\client_get.png").getImage();//소영
-           Image scaledImage =showImages.getScaledInstance(700,470,Image.SCALE_DEFAULT);//소영
-           ImagePanel showImage=new ImagePanel(new ImageIcon(scaledImage).getImage());//소영
+            Image showImages = new ImageIcon("C:\\2-2\\client_get.png").getImage(); 
+           Image scaledImage =showImages.getScaledInstance(700,470,Image.SCALE_DEFAULT); 
+           ImagePanel showImage=new ImagePanel(new ImageIcon(scaledImage).getImage()); 
            
-           showImage.setBounds(0, 0, 700, 470);//소영
-           showImage2.add(showImage);//소영
+           showImage.setBounds(0, 0, 700, 470); 
+           showImage2.add(showImage); 
            showImage.updateUI();    
            showImage.setVisible(true);
            
@@ -1284,11 +1284,11 @@ class TimerThread extends Thread {
          UserRepaint.isend = 0;
          int n=100;
          
-         while (n >= 0) //찬빈
+         while (n >= 0)  
          {
-            timerLabel.setText(Integer.toString(n)); //찬빈                  
+            timerLabel.setText(Integer.toString(n));                    
                      
-            if (n == 0) //찬빈
+            if (n == 0)  
             {
                if(Client.endcheck!=1) {
                   UserRepaint.isend = 1;// 그림판을 종료하게끔 만든다.
@@ -1305,7 +1305,7 @@ class TimerThread extends Thread {
                     }
                 else 
                 {
-                   n--;//찬빈
+                   n--; 
                  }
             try {
 
@@ -1317,7 +1317,7 @@ class TimerThread extends Thread {
             }
             }
          }
-         if(Client.endcheck==1||n>0) { //찬빈 
+         if(Client.endcheck==1||n>0) {   
             UserRepaint.isend = 1;
            timerLabel.setText(Integer.toString(n));
              try {
