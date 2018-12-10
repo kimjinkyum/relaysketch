@@ -1,4 +1,3 @@
-package kkk;
 
 import java.awt.Image;
 import java.io.BufferedOutputStream;
