@@ -1,4 +1,3 @@
-
 import java.awt.BorderLayout;
 
 import java.awt.Color;
@@ -186,32 +185,58 @@ public class Client
    
    static JLabel label_score = new JLabel("0:0");//label for score
 
+   static int PASSPRESSED=0;// check if first user press pass button.
    static int[] length = new int[20];
    static String seqnum; // game sequence.  
-   public static int check = 0;//??
+   public static int check = 0;//wait until drawing panel send button pressed.
    
    static int aful=0;
    static int bful=0;
    static int timercheck = 0;// check if time is over.
-   int SEQNUM=0;//??
+   int SEQNUM=0;//sequence number
    
-   Image showImages2 = new ImageIcon("C:\\2-2\\first.png").getImage(); 
-   Image scaledImage2 =showImages2.getScaledInstance(700,470,Image.SCALE_DEFAULT); 
-   ImagePanel showImage2=new ImagePanel(new ImageIcon(scaledImage2).getImage()); 
+   Image showImages2 = new ImageIcon("C:\\2-2\\first.png").getImage();//소영
+   Image scaledImage2 =showImages2.getScaledInstance(700,470,Image.SCALE_DEFAULT);//소영
+   ImagePanel showImage2=new ImagePanel(new ImageIcon(scaledImage2).getImage());//소영
    
    RelaySketch relay = new RelaySketch();
 
    /**
-	 * show_OutEnd During the game, users exit the game. show this panel, then end
-	 * game.
-	 */
+    * 
+    * 
+    * 
+    * Constructs the client by laying out the GUI and registering a
+    * 
+    * 
+    * 
+    * listener with the textfield so that pressing Return in the
+    * 
+    * 
+    * 
+    * listener sends the textfield contents to the server. Note
+    * 
+    * 
+    * 
+    * however that the textfield is initially NOT editable, and
+    * 
+    * 
+    * 
+    * only becomes editable AFTER the client receives the NAMEACCEPTED
+    * 
+    * 
+    * 
+    * message from the server.
+    * 
+    * 
+    * 
+    */
    
    
    public static void show_OutEnd() {
       
      outframe.setSize(400, 160);
      outframe.setLocationRelativeTo(null);
-      outPanel.setBackground(Color.WHITE);  
+      outPanel.setBackground(Color.WHITE); //은서
       JLabel outlabel= new JLabel("THE GAME IS END.");
       TitledBorder tb = new TitledBorder(new LineBorder(Color.black));
       
@@ -219,7 +244,7 @@ public class Client
       outlabel.setBorder(tb);
       outlabel.setForeground(new Color(255, 0, 0));
 
-      outlabel.setFont(new Font("Calibri", Font.BOLD, 30));  
+      outlabel.setFont(new Font("Calibri", Font.BOLD, 30)); //은서
 
       outlabel.setHorizontalAlignment(SwingConstants.CENTER);
       outPanel.add(outlabel, BorderLayout.CENTER);
@@ -271,34 +296,34 @@ public class Client
        }
    });
   
-        JLabel question = new JLabel(); 
-        question.setText("Do you want to RESTART the game?");  
-        question.setFont(new Font("Calibri", Font.BOLD, 28)); 
-        question.setBounds(41, 100, 431, 81); 
+        JLabel question = new JLabel();//은서
+        question.setText("Do you want to RESTART the game?"); //은서
+        question.setFont(new Font("Calibri", Font.BOLD, 28));//은서
+        question.setBounds(41, 100, 431, 81);//은서
   
-       JLabel result_score= new JLabel();  
+       JLabel result_score= new JLabel(); //은서
       //result_score.setSize(130, 88);
      // result_score.setLocation(165, 44);
        
-      result_score.setFont(new Font("Calibri", Font.BOLD, 50));  
+      result_score.setFont(new Font("Calibri", Font.BOLD, 50)); //은서
       result_score.setVisible(true);
       label_score.setVisible(true);
       label_score.setText("0:0");
       
-      JPanel board = new JPanel(); 
-      board.setBackground(Color.white); 
-      board.setBounds(12, 10, 460, 100); 
+      JPanel board = new JPanel();//은서
+      board.setBackground(Color.white);//은서
+      board.setBounds(12, 10, 460, 100);//은서
       
       TitledBorder tb = new TitledBorder(new LineBorder(Color.black));
       
       resultPanel.setBorder(tb);
-      resultPanel.add(board); 
-      board.setLayout(null); 
+      resultPanel.add(board);//은서
+      board.setLayout(null);//은서
       
       result_score.setBounds(160, 20, 250, 90);
       board.add(result_score);
      
-      board.setVisible(true); 
+      board.setVisible(true);//은서
       
       int score_first= Integer.parseInt(result_end.substring(0,result_end.indexOf(":")));
       int score_second= Integer.parseInt(result_end.substring(result_end.indexOf(":")+1));
@@ -321,22 +346,22 @@ public class Client
 
       }
      
-      yes.setBounds(100, 190, 120, 41); 
-      yes.setFont(new Font("Arial Black", Font.PLAIN, 22)); 
-      yes.setBackground(Color.WHITE);  
+      yes.setBounds(100, 190, 120, 41);//은서
+      yes.setFont(new Font("Arial Black", Font.PLAIN, 22));//은서
+      yes.setBackground(Color.WHITE); //은서
       
-      no.setBounds(270, 190, 120, 41); 
-      no.setFont(new Font("Arial Black", Font.PLAIN, 22)); 
-      no.setBackground(Color.WHITE); 
+      no.setBounds(270, 190, 120, 41);//은서
+      no.setFont(new Font("Arial Black", Font.PLAIN, 22));//은서
+      no.setBackground(Color.WHITE);//은서
       
       
-      resultframe.getContentPane().add(resultPanel); 
-      resultPanel.setLayout(null); 
+      resultframe.getContentPane().add(resultPanel);//은서
+      resultPanel.setLayout(null);//은서
       resultPanel.add(yes);
       resultPanel.add(no);
-      resultPanel.add(question); 
+      resultPanel.add(question);//은서
       resultframe.setVisible(true);
-      resultframe.repaint();  
+      resultframe.repaint(); //찬빈
       
    }
    /**correct_answer
@@ -386,16 +411,16 @@ public class Client
    {
           frame.setSize(1280, 720);
          frame.getContentPane().add(welcomePanel, BorderLayout.NORTH);
-         panel.setBounds(782, 100, 470, 420);  
+         panel.setBounds(782, 100, 470, 420); //은서
          frame.setResizable(false);// 사이즈 조정x
          frame.setLocationRelativeTo(null);
          textField.setEditable(false);
          panel.add(textField, "North");       
-         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
+         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);//은서
          
          messageArea.setEditable(false);
-         messageArea.setLineWrap(true);         
-         panel.add(new JScrollPane(messageArea));          
+         messageArea.setLineWrap(true);//은서        
+         panel.add(new JScrollPane(messageArea)); //은서        
          panel.setBackground(Color.GRAY);     
          welcomePanel.add(panel);
          welcomePanel.add(timerLabel, "NORTH");
@@ -412,7 +437,7 @@ public class Client
          label_category.setForeground(Color.black);
          label_category.setFont(new Font("Calibri", Font.BOLD | Font.ITALIC, 45));
          label_category.setBounds(14, 10, 266, 68);
-         welcomePanel.add(label_category); 
+         welcomePanel.add(label_category);// 진겸
          
          label_word.setForeground(Color.black);
          label_word.setFont(new Font("Calibri", Font.BOLD | Font.ITALIC, 28));
@@ -438,10 +463,19 @@ public class Client
          label_score.setFont(new Font("Arial Rounded MT Bold", Font.BOLD | Font.ITALIC, 50));
          label_score.setBounds(547, 86, 103, 56);
          welcomePanel.add(label_score);
-        
-         label_score.setVisible(true);  
-         //label_score.setVisible(false);  
-         label_word.setVisible(false); 
+         JButton PassButton = new JButton("PASS");
+         PassButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent arg0) {
+               out.println("<PASS>");
+               PASSPRESSED=1;
+            }
+
+         });
+
+         PassButton.setBounds(364, 102, 105, 27);
+         label_score.setVisible(true); //은서
+         //label_score.setVisible(false); //진겸
+         label_word.setVisible(false);// 진겸
 
    }
    
@@ -450,8 +484,23 @@ public class Client
       set_GUI();
       textField.addActionListener(new ActionListener() {
 
-    	// for chatting actionlistener.
-  		
+         /**
+          * 
+          * 
+          * 
+          * Responds to pressing the enter key in the textfield by sending
+          * 
+          * 
+          * 
+          * the contents of the text field to the server. Then clear
+          * 
+          * 
+          * 
+          * the text area in preparation for the next message.
+          * 
+          * 
+          * 
+          */
 
          public void actionPerformed(ActionEvent e)
 
@@ -469,12 +518,40 @@ public class Client
    
    
 
+   /**
+    * 
+    * 
+    * 
+    * Connects to the server then enters the processing loop.
+    * 
+    * 
+    * 
+    * @return
+    * 
+    * 
+    * 
+    * @throws IOException
+    * 
+    * 
+    * 
+    * @throws ClassNotFoundException
+    * 
+    * 
+    * 
+    * @throws InterruptedException
+    * 
+    * 
+    * 
+    * @throws UnknownHostException
+    * 
+    * 
+    * 
+    */
 
    public void run() throws IOException, ClassNotFoundException, InterruptedException {
 
       String serverAddress = null;
-      /* 다른 클래스에서 ip을 입력받기 때문에 그 입력 받을 때 까지 기다리는 것 */
-		
+
       while (true)
 
       {
@@ -504,29 +581,78 @@ public class Client
       out = new PrintWriter(socket.getOutputStream(), true);
 
       // Process all messages from server, according to the protocol.
-   // 프로토콜을 따라서 게임 진행
-		
+
       while (true)
 
       {
 
          UserRepaint b = null;
 
-         String line = in.readLine();// 서버에서 메시지 읽어오기
+         String line = in.readLine();
          
         if (line.startsWith("<NAMEACCEPTED>")) {
         	 // 서버에게 name accepted메시지가 오면 이름 중복이 아니라는 의미
-             uniqueName=1;// unique name을 1로 변경->릴레이스케치클래스에서 중복인지 아닌지 판명
             
+             uniqueName=1;// unique name을 1로 변경->릴레이스케치클래스에서 중복인지 아닌지 판명
+             
+             System.out.print("");
              textField.setEditable(true);// 채팅창을 실행할 수 있도록
 
 
           }
-        
+     // 서버에게 norestart라는 메시지 오면 게임이 더 이상 중지 하는 것이 아니기 때문에 show_Out_End 끝났다는 메소드 불러옴
+        else if(line.startsWith("<NORESTART>"))
+        {
+        	if(showend==0){
+        	show_OutEnd();// 게임이 끝났을 때의 메시지(비정상적, 혹은 재시작 NO
+
+        	}
+        }
+        /* 서버에게 user out이라는 메시지가 오면 네임 리스트에서 한명이 빠지는 것이기 때문에 네임리스트 업데이트 */
+        else if(line.startsWith("<USEROUT>"))
+         {
+            
+            if(gamestart==1) { 
+                // n=0; //찬빈
+                 
+                 endcheck=1;
+             }
+             namelist_a.setText("A team");
+              namelist_b.setText("B team");
+              String many = in.readLine();
+              int acount = 0, bcount = 0;
+              String[] namelist_A = new String[30];
+              String[] namelist_B = new String[30];
+              System.out.print("");
+              for (int i = 0; i < Integer.parseInt(many); i++) {
+                 String names = in.readLine();
+                 if (names.charAt(0) == '<' && names.charAt(2) == '>') {// 처음 들어왔을 때
+                    System.out.print("");
+                    if (names.substring(0, 3).equals("<A>")) {
+                       namelist_A[i - bcount] = names;
+                       acount++;
+                    } else if (names.substring(0, 3).equals("<B>")) {
+                       namelist_B[i - acount] = names;
+                       bcount++;
+                    }
+
+                    System.out.print("");
+                 }
+              }
+            
+              String astring = "", bstring = "";
+              namelist_a.setText("<html>" + namelist_a.getText() + "<br>" + namelist_A[0] + "<br>" + namelist_A[1]
+                    + "<br>" + namelist_A[2] + "</html>");
+
+              namelist_b.setText("<html>" + namelist_b.getText() + "<br>" + namelist_B[0] + "<br>" + namelist_B[1]
+                    + "<br>" + namelist_B[2] + "</html>");
+
+            
+         }
         /*
-		 * 서버에게 이름을 보내라는 메시지가 오면 이름을 입력하게 되는데 다른 클래스이기 때문에 package 변수를 사용 서버는 이름이 중복이
-		 * 아니라는 것을 확인할 떄까지 submitname이라는 메시지를 보냄
-		 */
+      		 * 서버에게 이름을 보내라는 메시지가 오면 이름을 입력하게 되는데 다른 클래스이기 때문에 package 변수를 사용 서버는 이름이 중복이
+      		 * 아니라는 것을 확인할 떄까지 submitname이라는 메시지를 보냄
+      		 */
          else if (line.startsWith("<SUBMITNAME>")) {
             while (true) {
                if (RelaySketch.check_name == 1)
@@ -543,11 +669,60 @@ public class Client
             } // while 끝
 
          } 
+        /*
+		 * 새로운 사람이 들어올때마다 서버는 team view라는 메시지 를 주기 떄문에 team view라는 메시지를 받으면 namelist업데이트
+		 */
+         else if (line.startsWith("<TEAMVIEW>")) {
+            
+            namelist_a.setText("A team");
+            namelist_b.setText("B team");
+            String many = in.readLine();
+            int acount = 0, bcount = 0;
+            String[] namelist_A = new String[30];
+            String[] namelist_B = new String[30];
+            System.out.print("");
+            for (int i = 0; i < Integer.parseInt(many); i++) {
+               String names = in.readLine();
+               if (names.charAt(0) == '<' && names.charAt(2) == '>') {// 처음 들어왔을 때
+                  System.out.print("");
+                  if (names.substring(0, 3).equals("<A>")) {
+                     namelist_A[i - bcount] = names;
+                     acount++;
+                  } else if (names.substring(0, 3).equals("<B>")) {
+                     namelist_B[i - acount] = names;
+                     bcount++;
+                  }
+
+                  System.out.print("");
+               }
+            }
+            String astring = "", bstring = "";
+            namelist_a.setText("<html>" + namelist_a.getText() + "<br>" + namelist_A[0] + "<br>" + namelist_A[1]
+                  + "<br>" + namelist_A[2] + "</html>");
+
+            namelist_b.setText("<html>" + namelist_b.getText() + "<br>" + namelist_B[0] + "<br>" + namelist_B[1]
+                  + "<br>" + namelist_B[2] + "</html>");
+
+        
+         } 
+ 
+         else if(line.startsWith("<STOP>"))
+         {
+             if(gamestart==1) { 
+                // n=0; //찬빈 
+                 
+                 endcheck=1;
+             }
+         }
+         
+         
+         
+
+   
         
         /*
 		 * 이름이 accepted되면 서버는 team을 고르라는 메시지 만약 한팀이 적정인원수를 넘게 되면, 메시지를 띄우고 상대팀으로 자동 배정
 		 */
-         
          else if (line.startsWith("<SUBMITTEAM>"))
 
          {
@@ -563,19 +738,20 @@ public class Client
                   out.println(RelaySketch.TEAM);
                    String ateamnum=in.readLine();
                    String bteamnum=in.readLine();
-
-					/*
+                   /*
 					 * 제한 인원수가 넘으면 메시지를 보내주는것이 Relay sketch 클래스에 있기 때문에 package변수를 사용해서 메시지 보냄.
 					 */
                    if((ateamnum).equals("3"))
                    {
                       RelaySketch.afu=1;
-                  }
+                      System.out.print("");
+                   }
                    if((bteamnum.equals("3")))
                    {
                       {
                           RelaySketch.bfu=1;
-                      }  
+                          System.out.print("");
+                       }  
                    }
                   break;
 
@@ -586,188 +762,16 @@ public class Client
             }
 
          }
-        
-        // AFULL이라는 메시지는 A팀이 제한인원을 초과했다라는 뜻으로 aful을 1로 변경해주어서 , 팝업 창(A팀이 꽉찼다는)을 띄울 수 있게
-			// 해줌
- else if(line.startsWith("<AFULL>"))
- {
-   aful=1;
- }
- else if(line.startsWith("<BFULL>"))
- {
-  bful=1;
-
- }
-  
         /* 만약 닉네임과 팀이 다 입력되었으면 게임판을 띄우라는 메시지 */
 		
- else if (line.startsWith("<GAMEFRAME>")) {
+         else if (line.startsWith("<GAMEFRAME>")) {
 
-      showImage2.setBounds(30, 170, 700, 470); 
-      welcomePanel.add(showImage2);          
-    showImage2.setVisible(true);
-    frame.setVisible(true);
+              showImage2.setBounds(30, 170, 700, 470);//소영
+              welcomePanel.add(showImage2);//소영         
+            showImage2.setVisible(true);
+            frame.setVisible(true);
 
- }
-        
-        /*
-      		 * 게임 인원인 6명이 다들어 오게 되면 서버는 ALLIN이라는 메세지를 주게되고 클라이언트들은 3초를 기달렸다가 본인의 순서를받게 되고 바로
-      		 * 게임이 시작된다.
-      		 */
-               else if (line.startsWith("<ALLIN>"))
-
-               {
-                  timeover=0;  
-                  
-                  gamestart=1;
-
-                  TimerThread th = new TimerThread(timerLabel);
-
-                  label.setText("3");
-
-                  Thread.sleep(1000);
-
-                  label.setText("2");
-
-                  Thread.sleep(1000);
-
-                  label.setText("1");
-
-                  Thread.sleep(1000);
-
-                  label.setText("START");
-
-                  Thread.sleep(1000);
-
-                  th.start();
-
-                  label_score.setVisible(true);
-            
-
-               }
-        
-        /* 제시어를 게임 판넬에 띄워준다(첫번째 사람에게만 AB순서 동일) */
-		
-               else if (line.startsWith("<GIVEWORD>")) {
-
-                  String word;
-
-                  word = in.readLine();
-
-                  label_word.setText(word);
-
-                  label_word.setVisible(true);
-                
-               }
-              /* 제시어의 카테고리를 게임판넬에 띄워준다.(모든 사람, AB동일) */
-               else if (line.startsWith("<GIVECATEGORY>"))
-
-               {
-
-                  String givencategory;
-
-                  givencategory = in.readLine();
-
-                  label_category.setText(givencategory);
-
-               } // 서버에서 단어받아오기, 
-        
-        
-     // 서버에게 norestart라는 메시지 오면 게임이 더 이상 중지 하는 것이 아니기 때문에 show_Out_End 끝났다는 메소드 불러옴
-        else if(line.startsWith("<NORESTART>"))
-        {
-        	if(showend==0){
-        	show_OutEnd();// 게임이 끝났을 때의 메시지(비정상적, 혹은 재시작 NO
-        	}
-        }
-        /* 서버에게 user out이라는 메시지가 오면 네임 리스트에서 한명이 빠지는 것이기 때문에 네임리스트 업데이트 */
-        else if(line.startsWith("<USEROUT>"))
-         {
-            
-            if(gamestart==1) { 
-                // n=0;  
-                 
-                 endcheck=1;
-             }
-             namelist_a.setText("A team");
-              namelist_b.setText("B team");
-              String many = in.readLine();
-              int acount = 0, bcount = 0;
-              String[] namelist_A = new String[30];
-              String[] namelist_B = new String[30];
-              for (int i = 0; i < Integer.parseInt(many); i++) {
-                 String names = in.readLine();
-                 if (names.charAt(0) == '<' && names.charAt(2) == '>') {// 처음 들어왔을 때
-                    if (names.substring(0, 3).equals("<A>")) {
-                       namelist_A[i - bcount] = names;
-                       acount++;
-                    } else if (names.substring(0, 3).equals("<B>")) {
-                       namelist_B[i - acount] = names;
-                       bcount++;
-                    }
-
-                 }
-              }
-            
-              String astring = "", bstring = "";
-              namelist_a.setText("<html>" + namelist_a.getText() + "<br>" + namelist_A[0] + "<br>" + namelist_A[1]
-                    + "<br>" + namelist_A[2] + "</html>");
-
-              namelist_b.setText("<html>" + namelist_b.getText() + "<br>" + namelist_B[0] + "<br>" + namelist_B[1]
-                    + "<br>" + namelist_B[2] + "</html>");
-
-            
          }
-        
-        /*
-		 * 새로운 사람이 들어올때마다 서버는 team view라는 메시지 를 주기 떄문에 team view라는 메시지를 받으면 namelist업데이트
-		 */
-         else if (line.startsWith("<TEAMVIEW>")) {
-            
-            namelist_a.setText("A team");
-            namelist_b.setText("B team");
-            String many = in.readLine();
-            int acount = 0, bcount = 0;
-            String[] namelist_A = new String[30];
-            String[] namelist_B = new String[30];
-            for (int i = 0; i < Integer.parseInt(many); i++) {
-               String names = in.readLine();
-               if (names.charAt(0) == '<' && names.charAt(2) == '>') {// 처음 들어왔을 때
-                  if (names.substring(0, 3).equals("<A>")) {
-                     namelist_A[i - bcount] = names;
-                     acount++;
-                  } else if (names.substring(0, 3).equals("<B>")) {
-                     namelist_B[i - acount] = names;
-                     bcount++;
-                  }
-
-               }
-            }
-            String astring = "", bstring = "";
-            namelist_a.setText("<html>" + namelist_a.getText() + "<br>" + namelist_A[0] + "<br>" + namelist_A[1]
-                  + "<br>" + namelist_A[2] + "</html>");
-
-            namelist_b.setText("<html>" + namelist_b.getText() + "<br>" + namelist_B[0] + "<br>" + namelist_B[1]
-                  + "<br>" + namelist_B[2] + "</html>");
-
-        
-         } 
- 
-         else if(line.startsWith("<STOP>"))
-         {
-             if(gamestart==1) { // 게임 진행 도중에
-              
-                 
-                 endcheck=1;//end check가 1이면 끝났다는 것을 의미
-             }
-         }
-         
-         
-         
-
-   
-       
-       
         /*
 		 * server 메시지가 아니라 유저 채팅 메시지 나는 것을 의미해서 채팅방에 메시지를 띄워줌 서버가 같은 팀멤버들에게만 이 메시지를
 		 * 보내기때문에 본인과 같은 팀원인 채팅밖에 보지 못함.
@@ -789,20 +793,43 @@ public class Client
             {
              if(timeover==1) 
              {
-               break;   // timeover- timer 체크 하는 변수
-
+               break;   
              }
              if(endcheck==1)
                 break;
            System.out.print("");
-                     
+           if(seqnum.equals("1")&&PASSPRESSED==1) {
+           String queue=in.readLine();
+           out.println("nothing");// prevent waiting input from server
+           System.out.print("");
+           if(queue.startsWith("<GIVEWORD>")) // if pass button pushed
+
+           {
+
+
+              String word;
+
+              word=in.readLine();
+             System.out.print("");
+              label_word.setText(word);
+
+              label_word.setVisible(true); //change the word in the given category
+              
+
+
+           }//진겸
+           }
+          
         // 그림판에서 save버튼 누르면 check변수가 1로 바뀜== 그림을 다 그렸다는 뜻으로 서버에게 메시지 보내줌.
+           
              if(check==1) {
 
                 
-        
+                System.out.print("");
+
                  out.println("<send>");
               
+                 PASSPRESSED=0;
 
                  System.out.print("");
 
@@ -833,18 +860,18 @@ public class Client
 
          }
         /* A팀이고, 서버와 소켓통신을 한번 더 연 후 본인이 그린 그림을 전송 시퀀스 넘버가 1또는 2인 사람만 */
+        
          else if (line.startsWith("<ACANVAS>"))
 
          {
-        	// 서버와 그림전송을 위한 소켓을 하나 더 생성한다.
-				
+
             Socket soc = new Socket(serverAddress, 11111);
 
+            System.out.print("");
 
             out2 = soc.getOutputStream();
 
             DataOutputStream dout = new DataOutputStream(out2);
-            /* 본인이 그린 그림을 읽어서 소켓을 통해 보내준다. */
 
             fin = new FileInputStream(new File("C:\\2-2\\client_paint.png"));
 
@@ -868,6 +895,7 @@ public class Client
 
             datas = data;
 
+            System.out.print("");
 
             fin.close();
 
@@ -890,15 +918,16 @@ public class Client
             }
          
          }
-    	/* B팀에 해당하는 것으로 A팀과 동일하게 진행한다.(소켓열고 본인이 그린 그림 보내줌) */
-		
+        /* B팀에 해당하는 것으로 A팀과 동일하게 진행한다.(소켓열고 본인이 그린 그림 보내줌) */
+    	
          else if (line.startsWith("<BCANVAS>"))
 
          {
 
             Socket soc = new Socket(serverAddress, 33333);
 
-           
+            System.out.print("");
+
             out2 = soc.getOutputStream();
 
             DataOutputStream dout = new DataOutputStream(out2);
@@ -925,7 +954,8 @@ public class Client
 
             datas = data;
 
-           
+            System.out.println(data);
+
             fin.close();
 
             fin = new FileInputStream("C:\\2-2\\client_paint.png");
@@ -948,10 +978,20 @@ public class Client
            
 
          }
-    
-        
+        // AFULL이라는 메시지는 A팀이 제한인원을 초과했다라는 뜻으로 aful을 1로 변경해주어서 , 팝업 창(A팀이 꽉찼다는)을 띄울 수 있게
+		// 해줌
+         else if(line.startsWith("<AFULL>"))
+         {
+           aful=1;
+           System.out.print("");
+         }
+         else if(line.startsWith("<BFULL>"))
+         {
+          bful=1;
 
-		/*
+         System.out.print("");
+         }
+        /*
 		 * 서버가 이전 그림을 잘 받고, 클라이언트에게 이전 사람의 그림을 넘겨 주는 것 그림을 전송할 때와 마찬가지로 소켓을 열어서 서버에게
 		 * 그림전송을 받고, 그 그림을 clinet_get.png로 저장해서 그림판넬에 띄워준다.
 		 */
@@ -963,7 +1003,8 @@ public class Client
 
             Socket soc2 = new Socket(serverAddress, 22222);
 
-           
+            System.out.print("");
+
             in2 = soc2.getInputStream();
 
             DataInputStream dout1 = new DataInputStream(in2);
@@ -980,6 +1021,9 @@ public class Client
 
             byte[] buffer2 = new byte[5000];
 
+            System.out.print("");
+
+            System.out.print("");
             
 
             int temp = data;
@@ -996,8 +1040,12 @@ public class Client
 
                String queue = in.readLine();
 
-            
-         
+               System.out.println("receive : " + len);
+
+               System.out.println("!");
+
+               System.out.println(queue);
+
                if (Integer.toString(len).equals(queue))
 
                {
@@ -1008,12 +1056,14 @@ public class Client
 
             }
 
-           
+            System.out.print("");
+
             if (count == temp)
 
             {
 
-           
+               System.out.print("");
+
                din.writeInt(1);
 
                
@@ -1031,7 +1081,7 @@ public class Client
 
          }
         /* B팀에게 그림을 전송하는 것으로 ARECIVE와 똑같이 작동 */
-		
+    	
          else if (line.startsWith("<BRECEIVE>"))
 
          {
@@ -1039,6 +1089,8 @@ public class Client
             int count = 0;
 
             Socket soc3 = new Socket(serverAddress, 44444);
+
+            System.out.print("");
 
             in2 = soc3.getInputStream();
 
@@ -1056,8 +1108,10 @@ public class Client
 
             byte[] buffer2 = new byte[5000];
 
-         
-        
+            System.out.print("");
+
+            System.out.print("");
+
             int temp = data;
 
             len = 0;
@@ -1073,6 +1127,7 @@ public class Client
                String queue = in.readLine();
 
 
+               System.out.print("");
 
                if (Integer.toString(len).equals(queue))
 
@@ -1084,11 +1139,13 @@ public class Client
 
             }
 
+            System.out.print("");
 
             if (count == temp)
 
             {
 
+               System.out.print("");
 
                din.writeInt(1);
 
@@ -1105,22 +1162,85 @@ public class Client
             }
            
          }
-
-		/* 서버 쪽에서 그림 전송을 위한 소켓을 다 썼다는 메시지로, 소켓 연결을 끊는다. */
+    	/* 서버 쪽에서 그림 전송을 위한 소켓을 다 썼다는 메시지로, 소켓 연결을 끊는다. */
+        
          else if (line.startsWith("<OUT>"))
 
          {
 
+            System.out.print("");
 
             out2.close();
 
+            System.out.print("");
 
          }
+        /*
+  		 * 게임 인원인 6명이 다들어 오게 되면 서버는 ALLIN이라는 메세지를 주게되고 클라이언트들은 3초를 기달렸다가 본인의 순서를받게 되고 바로
+  		 * 게임이 시작된다.
+  		 */
+         else if (line.startsWith("<ALLIN>"))
+
+         {
+            timeover=0; //찬빈
+            
+            gamestart=1;
+            System.out.print("");
+
+            TimerThread th = new TimerThread(timerLabel);
+
+            label.setText("3");
+
+            Thread.sleep(1000);
+
+            label.setText("2");
+
+            Thread.sleep(1000);
+
+            label.setText("1");
+
+            Thread.sleep(1000);
+
+            label.setText("START");
+
+            Thread.sleep(1000);
+
+            th.start();
+
+            label_score.setVisible(true);
       
-      
+
+         }
+        /* 제시어를 게임 판넬에 띄워준다(첫번째 사람에게만 AB순서 동일) */
+    	
+         else if (line.startsWith("<GIVEWORD>")) {
+
+            String word;
+
+            word = in.readLine();
+
+            label_word.setText(word);
+
+            label_word.setVisible(true);
+          
+         } // 진겸
+        /* 제시어의 카테고리를 게임판넬에 띄워준다.(모든 사람, AB동일) */
+        
+         else if (line.startsWith("<GIVECATEGORY>"))
+
+         {
+
+            String givencategory;
+
+            givencategory = in.readLine();
+
+            label_category.setText(givencategory);
+
+         } // 서버에서 단어받아오기,//진겸
         /*서버 쪽에서 점수 변동(즉 3번째 사람이 정답을 입력한 것으로 점수를 업데이트 해준다.
 		 * 서버가 A팀에게는 A:B
 		 * B팀이게는 B:A로 보내주기때문에 본인의 팀과 관계 없이 읽은 그대로 게임 판넬에 띄워준다.*/
+        
          else if (line.startsWith("<SCORE>")) {
             
 
@@ -1137,25 +1257,29 @@ public class Client
          }
         /*서버에게 정답을 입력하라는 메시지(A팀)
 		 * 이 메시지를 받으면 정답을 입력하라는 textfiled가 뜨게 되고 그 string을 서버에게 보내준다.*/
+        
          else if (line.startsWith("<AANSWERSHEET>"))
 
          {
-             Image showImages = new ImageIcon("C:\\2-2\\client_get.png").getImage(); 
-             Image scaledImage =showImages.getScaledInstance(700,470,Image.SCALE_DEFAULT); 
-             ImagePanel showImage=new ImagePanel(new ImageIcon(scaledImage).getImage()); 
+             Image showImages = new ImageIcon("C:\\2-2\\client_get.png").getImage();//소영
+             Image scaledImage =showImages.getScaledInstance(700,470,Image.SCALE_DEFAULT);//소영
+             ImagePanel showImage=new ImagePanel(new ImageIcon(scaledImage).getImage());//소영
              
-             showImage.setBounds(0, 0, 700, 470); 
-             showImage2.add(showImage); 
+             showImage.setBounds(0, 0, 700, 470);//소영
+             showImage2.add(showImage);//소영
              showImage.updateUI();    
              showImage.setVisible(true);
      
              
+             System.out.print("");
 
-             String q = get_answer();//정답 얻어오기
+             String q = get_answer();
 
-
+             System.out.print("");
 
              out.println("<Aanswer>" + q);
+
+             System.out.print("");
 
              String result;
 
@@ -1163,16 +1287,14 @@ public class Client
              for(int i=0;i<1000;i++) {
             	 System.out.print(" ");
              }
-           //정답이 맞았을떄
-				
+             
              if (result.startsWith("<ANSWERCORRECT>"))
 
              {
 
                 correct_answer();
              }
-           //정답이 틀렸을때
-				
+
              else if (result.startsWith("<ANSWERWRONG>"))
 
              {
@@ -1181,29 +1303,32 @@ public class Client
              }
              
      
-             showImage.setVisible(false);// 그림 보여주던것을 false로 바꾼다.
+             showImage.setVisible(false);
          
-         }  
+         } // 진겸
         /*B팀 마지막사람에게 정답판넬을 띄우는 것으로 A팀과 동일하게 작동*/
-		
+    	
          else if (line.startsWith("<BANSWERSHEET>"))
 
          {
-             Image showImages = new ImageIcon("C:\\2-2\\client_get.png").getImage(); 
-             Image scaledImage =showImages.getScaledInstance(700,470,Image.SCALE_DEFAULT); 
-             ImagePanel showImage=new ImagePanel(new ImageIcon(scaledImage).getImage()); 
+             Image showImages = new ImageIcon("C:\\2-2\\client_get.png").getImage();//소영
+             Image scaledImage =showImages.getScaledInstance(700,470,Image.SCALE_DEFAULT);//소영
+             ImagePanel showImage=new ImagePanel(new ImageIcon(scaledImage).getImage());//소영
              
-             showImage.setBounds(0, 0, 700, 470); 
-             showImage2.add(showImage); 
+             showImage.setBounds(0, 0, 700, 470);//소영
+             showImage2.add(showImage);//소영
              showImage.updateUI();    
              showImage.setVisible(true);
                                   
+            System.out.print("");
 
             String q = get_answer();
 
-          
+            System.out.print("");
+
             out.println("<Banswer>" + q);
 
+            System.out.print("");
 
             String result;
 
@@ -1221,40 +1346,41 @@ public class Client
             }
 
          showImage.setVisible(false);
-         }  
-      //서버에서 자신의 순서를 받는 것으로 <SEQUENCE>라는 메세지 뒤에 자신의 순서가 붙어서 온다.
-
+         } // 진겸
+         
          else if (line.startsWith("<SEQUENCE>"))
          {
             seqnum = line.substring(10);
             SEQNUM=Integer.parseInt(seqnum);
+            System.out.print("");
 
             label.setText(seqnum);
-                    } 
+                    }  
       //그림판을 띄우라는 메세지로 SEQNUM이 1일때는 처음사람으로 받아온 그림을 띄워줄 필요가 없고 처음사람이 아닐 경우 위에서 받아온 그림을 화면에 띄워준다.
+        
          else if (line.startsWith("<SEND>"))
 
-         {   
-            if(SEQNUM!=1) {//처음 순서인 사람은 전에 유저가 그린 그림이 없기 때문에 제외
-				
-            Image showImages = new ImageIcon("C:\\2-2\\client_get.png").getImage(); 
-           Image scaledImage =showImages.getScaledInstance(700,470,Image.SCALE_DEFAULT); 
-           ImagePanel showImage=new ImagePanel(new ImageIcon(scaledImage).getImage()); 
+         { //찬빈 
+            if(SEQNUM!=1) {
+            Image showImages = new ImageIcon("C:\\2-2\\client_get.png").getImage();//소영
+           Image scaledImage =showImages.getScaledInstance(700,470,Image.SCALE_DEFAULT);//소영
+           ImagePanel showImage=new ImagePanel(new ImageIcon(scaledImage).getImage());//소영
            
-           showImage.setBounds(0, 0, 700, 470); 
-           showImage2.add(showImage); 
+           showImage.setBounds(0, 0, 700, 470);//소영
+           showImage2.add(showImage);//소영
            showImage.updateUI();    
            showImage.setVisible(true);
            
            Thread.sleep(3000);
              showImage.setVisible(false);
-             b = new UserRepaint();//그림판을 띄운다.
+             b = new UserRepaint();
             }
             if(SEQNUM==1) {
                b = new UserRepaint();
             }
          }
          }
+      // 여기다가 점수들 띄워주는 창 올려봐
    }
    /**
     * Runs the client as an application with a closeable frame.
@@ -1282,18 +1408,19 @@ class TimerThread extends Thread {
 
    public void run() {
          UserRepaint.isend = 0;
-         int n=100;
+         int n=20;
          
-         while (n >= 0)  
+         while (n >= 0) //찬빈
          {
-            timerLabel.setText(Integer.toString(n));                    
+            timerLabel.setText(Integer.toString(n)); //찬빈                  
                      
-            if (n == 0)  
+            if (n == 0) //찬빈
             {
                if(Client.endcheck!=1) {
-                  UserRepaint.isend = 1;// 그림판을 종료하게끔 만든다.
-					Client.timeover = 1;//그림판이 띄워져 있을경우 결과창이 안뜨는것을 방지하기 위하여 그림판으로 부터의 메세지를 기다리고 있는 while문을 강제로 break시킨다.
-					Client.show_result();//결과창 보여주기
+                  System.out.print("");
+                  UserRepaint.isend=1;//찬빈
+                  Client.timeover=1;
+                  Client.show_result();
                   break;
                }               
             }
@@ -1305,7 +1432,7 @@ class TimerThread extends Thread {
                     }
                 else 
                 {
-                   n--; 
+                   n--;//찬빈
                  }
             try {
 
@@ -1317,7 +1444,7 @@ class TimerThread extends Thread {
             }
             }
          }
-         if(Client.endcheck==1||n>0) {   
+         if(Client.endcheck==1||n>0) { //찬빈 
             UserRepaint.isend = 1;
            timerLabel.setText(Integer.toString(n));
              try {
@@ -1328,7 +1455,7 @@ class TimerThread extends Thread {
                   e.printStackTrace();
                }              
              if(Client.showend==0) {
-             Client.show_OutEnd();//게임중간에 누군가 나갔을경우 show_OutEnd를 띄워준다
+             Client.show_OutEnd();
              }
          }
       }
