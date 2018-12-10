@@ -1,3 +1,5 @@
+package kkk;
+
 import java.awt.Image;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -454,7 +456,7 @@ public class Server {
                                     ServerSocket soc2 = new ServerSocket(11111);
 
                                     int count = 0;
-                                    writer.println("<CANVAS>");
+                                    writer.println("<ACANVAS>");
                                     send = soc2.accept();// if the clint ready for transfer file, then connection accept.
                                     
                                     InputStream in2 = null;
@@ -517,7 +519,7 @@ public class Server {
                                     ServerSocket soc = new ServerSocket(22222);
 
                                     int count = 0;
-                                    writer.println("<RECEIVE>");
+                                    writer.println("<ARECEIVE>");
                                     send = soc.accept();
                                     OutputStream in3 = null;
                                     FileOutputStream out3 = null;
